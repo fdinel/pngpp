@@ -66,8 +66,8 @@ namespace png
     {
     public:
         /**
-         * Constructs an std_error object.  The message string is appended
-         * with <tt>": "</tt> and error description as returned by \c
+         * Constructs an std_error object.  The \a message string is appended
+         * with <tt>": "</tt> and the error description as returned by \c
          * std::strerror(\a error).
          *
          * \param  message  error description

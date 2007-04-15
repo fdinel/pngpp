@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -51,26 +51,26 @@ namespace png
             png_set_read_fn(m_png, & stream, read_data);
         }
 
-        ~reader(void)
+        ~reader()
         {
-            m_info.destroy();
-            m_end_info.destroy();
-            png_destroy_read_struct(& m_png, 0, 0);
+            png_destroy_read_struct(& m_png,
+                                    m_info.get_png_info_ptr(),
+                                    m_end_info.get_png_info_ptr());
         }
 
-        void read_png(void)
+        void read_png()
         {
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
             png_read_png(m_png,
-                         m_info.get_png_struct(),
+                         m_info.get_png_info(),
                          /* transforms = */ 0,
                          /* params = */ 0);
         }
 
-        void read_info(void)
+        void read_info()
         {
             if (setjmp(m_png->jmpbuf))
             {
@@ -107,7 +107,7 @@ namespace png
             }
         }
 
-        void read_end_info(void)
+        void read_end_info()
         {
             if (setjmp(m_png->jmpbuf))
             {
@@ -116,7 +116,7 @@ namespace png
             m_end_info.read();
         }
 
-        void update_info(void)
+        void update_info()
         {
             m_info.update();
         }
@@ -143,7 +143,8 @@ namespace png
             }
             catch (...)
             {
-                assert(!"caught something wrong");
+                assert(!"read_data: caught something wrong");
+                rd->set_error("read_data: caught something wrong");
             }
             if (rd->is_error())
             {

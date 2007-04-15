@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -31,29 +31,40 @@
 #ifndef PNGPP_CONVERT_COLOR_SPACE_HPP_INCLUDED
 #define PNGPP_CONVERT_COLOR_SPACE_HPP_INCLUDED
 
-#include "io_transform.hpp"
 #include "rgb_pixel.hpp"
 #include "rgba_pixel.hpp"
 
 namespace png
 {
 
+    /**
+     * \brief  IO transformation class template.  Converts image color space.
+     *
+     * This IO transformation class template is used to convert color space of
+     * the source image to color space of target image.  Not implemented --
+     * see specializations.
+     *
+     * \see  image, image::read
+     * \see  convert_color_space<rgb_pixel>, convert_color_space<rgba_pixel>
+     */
     template< typename pixel >
-    class convert_color_space
-        : public io_transform
+    struct convert_color_space
     {
-    public:
-        inline void operator()(io_base& io) const;
+        void operator()(io_base& io) const;
     };
 
-    // convert_color_space class template specializations
-    // for various pixel types
-
+    /**
+     * \brief  Converts image color space.  Specialization for rgb_pixel pixel
+     * type.
+     *
+     * Tries to convert source color space to RGB.  Throws error with
+     * human-readable description when color space could not be converted.
+     * Often, this means that you have to recompile libpng with some more
+     * conversion options turned on.
+     */
     template<>
-    class convert_color_space< rgb_pixel >
-        : public io_transform
+    struct convert_color_space< rgb_pixel >
     {
-    public:
         void operator()(io_base& io) const
         {
             if (io.get_bit_depth() == 16)
@@ -110,11 +121,18 @@ namespace png
         }
     };
 
+    /**
+     * \brief  Converts image color space.  Specialization for rgba_pixel pixel
+     * type.
+     *
+     * Tries to convert source color space to RGBA.  Throws error with
+     * human-readable description when color space could not be converted.
+     * Often, this means that you have to recompile libpng with some more
+     * conversion options turned on.
+     */
     template<>
-    class convert_color_space< rgba_pixel >
-        : public io_transform
+    struct convert_color_space< rgba_pixel >
     {
-    public:
         explicit convert_color_space(uint_32 filler = 0xff)
             : m_filler(filler)
         {

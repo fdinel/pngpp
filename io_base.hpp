@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -53,29 +53,29 @@ namespace png
         {
         }
 
-        ~io_base(void)
+        ~io_base()
         {
             assert(! m_png);
-            assert(! m_info.get_png_struct());
-            assert(! m_end_info.get_png_struct());
+            assert(! m_info.get_png_info());
+            assert(! m_end_info.get_png_info());
         }
 
-        info& get_info(void)
+        info& get_info()
         {
             return m_info;
         }
 
-        info const& get_info(void) const
+        info const& get_info() const
         {
             return m_info;
         }
 
-        end_info& get_end_info(void)
+        end_info& get_end_info()
         {
             return m_end_info;
         }
 
-        end_info const& get_end_info(void) const
+        end_info const& get_end_info() const
         {
             return m_end_info;
         }
@@ -83,27 +83,27 @@ namespace png
         //////////////////////////////////////////////////////////////////////
         // info accessors
         //
-        size_t get_width(void) const
+        size_t get_width() const
         {
             return m_info.get_width();
         }
 
-        size_t get_height(void) const
+        size_t get_height() const
         {
             return m_info.get_height();
         }
 
-        color_type get_color_type(void) const
+        color_type get_color_type() const
         {
             return m_info.get_color_type();
         }
 
-        int get_bit_depth(void) const
+        int get_bit_depth() const
         {
             return m_info.get_bit_depth();
         }
 
-        info::header get_header(void) const
+        info::header get_header() const
         {
             return m_info.get_header();
         }
@@ -123,26 +123,26 @@ namespace png
         // color space transformations
         //
 #if defined(PNG_READ_EXPAND_SUPPORTED)
-        void set_gray_1_2_4_to_8(void) const
+        void set_gray_1_2_4_to_8() const
         {
             png_set_gray_1_2_4_to_8(m_png);
         }
 
-        void set_palette_to_rgb(void) const
+        void set_palette_to_rgb() const
         {
             png_set_palette_to_rgb(m_png);
         }
 #endif
 
 #if defined(PNG_READ_BGR_SUPPORTED) || defined(PNG_WRITE_BGR_SUPPORTED)
-        void set_bgr(void) const
+        void set_bgr() const
         {
             png_set_bgr(m_png);
         }
 #endif
 
 #if defined(PNG_READ_GRAY_TO_RGB_SUPPORTED)
-        void set_gray_to_rgb(void) const
+        void set_gray_to_rgb() const
         {
             png_set_gray_to_rgb(m_png);
         }
@@ -171,7 +171,7 @@ namespace png
         // alpha channel transformations
         //
 #if defined(PNG_READ_STRIP_ALPHA_SUPPORTED)
-        void set_strip_alpha(void) const
+        void set_strip_alpha() const
         {
             png_set_strip_alpha(m_png);
         }
@@ -179,7 +179,7 @@ namespace png
 
 #if defined(PNG_READ_SWAP_ALPHA_SUPPORTED) \
     || defined(PNG_WRITE_SWAP_ALPHA_SUPPORTED)
-        void set_swap_alpha(void) const
+        void set_swap_alpha() const
         {
             png_set_swap_alpha(m_png);
         }
@@ -187,7 +187,7 @@ namespace png
 
 #if defined(PNG_READ_INVERT_ALPHA_SUPPORTED) \
     || defined(PNG_WRITE_INVERT_ALPHA_SUPPORTED)
-        void set_invert_alpha(void) const
+        void set_invert_alpha() const
         {
             png_set_invert_alpha(m_png);
         }
@@ -211,14 +211,14 @@ namespace png
         // byte order and packing transformations
         //
 #if defined(PNG_READ_SWAP_SUPPORTED) || defined(PNG_WRITE_SWAP_SUPPORTED)
-        void set_swap(void) const
+        void set_swap() const
         {
             png_set_swap(m_png);
         }
 #endif
 
 #if defined(PNG_READ_PACK_SUPPORTED) || defined(PNG_WRITE_PACK_SUPPORTED)
-        void set_packing(void) const
+        void set_packing() const
         {
             png_set_packing(m_png);
         }
@@ -226,7 +226,7 @@ namespace png
 
 #if defined(PNG_READ_PACKSWAP_SUPPORTED) \
     || defined(PNG_WRITE_PACKSWAP_SUPPORTED)
-        void set_packswap(void) const
+        void set_packswap() const
         {
             png_set_packswap(m_png);
         }
@@ -265,28 +265,28 @@ namespace png
 
 #if defined(PNG_READ_INTERLACING_SUPPORTED) \
     || defined(PNG_WRITE_INTERLACING_SUPPORTED)
-        int set_interlace_handling(void) const
+        int set_interlace_handling() const
         {
             return png_set_interlace_handling(m_png);
         }
 #endif
 
 #if defined(PNG_READ_INVERT_SUPPORTED) || defined(PNG_WRITE_INVERT_SUPPORTED)
-        void set_invert_mono(void) const
+        void set_invert_mono() const
         {
             png_set_invert_mono(m_png);
         }
 #endif
 
 #if defined(PNG_READ_16_TO_8_SUPPORTED)
-        void set_strip_16(void) const
+        void set_strip_16() const
         {
             png_set_strip_16(m_png);
         }
 #endif
 
     protected:
-        void* get_io_ptr(void) const
+        void* get_io_ptr() const
         {
             return png_get_io_ptr(m_png);
         }
@@ -297,24 +297,24 @@ namespace png
             m_error = message;
         }
 
-        void reset_error(void)
+        void reset_error()
         {
             m_error.clear();
         }
 
 /*
-        std::string const& get_error(void) const
+        std::string const& get_error() const
         {
             return m_error;
         }
 */
 
-        bool is_error(void) const
+        bool is_error() const
         {
             return !m_error.empty();
         }
 
-        void raise_error(void)
+        void raise_error()
         {
             longjmp(m_png->jmpbuf, -1);
         }

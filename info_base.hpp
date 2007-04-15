@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -50,27 +50,14 @@ namespace png
         {
         }
 
-        ~info_base(void)
-        {
-            if (m_png && m_info)
-            {
-                destroy();
-            }
-        }
-
-        void destroy(void)
-        {
-            assert(m_png);
-            assert(m_info);
-            png_destroy_info_struct(m_png, & m_info);
-#ifndef NDEBUG
-            m_png = 0;
-#endif
-        }
-
-        png_info* get_png_struct(void) const
+        png_info* get_png_info() const
         {
             return m_info;
+        }
+
+        png_info** get_png_info_ptr()
+        {
+            return & m_info;
         }
 
     protected:

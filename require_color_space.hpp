@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -31,47 +31,66 @@
 #ifndef PNGPP_REQUIRE_COLOR_SPACE_HPP_INCLUDED
 #define PNGPP_REQUIRE_COLOR_SPACE_HPP_INCLUDED
 
-#include "io_transform.hpp"
 #include "rgb_pixel.hpp"
 #include "rgba_pixel.hpp"
 
 namespace png
 {
 
+    /**
+     * \brief  IO transformation class template.  Enforces image color space.
+     *
+     * This IO transformation class template used to enforce source image
+     * color space.  Not implemented -- see specializations.
+     *
+     * \see  image, image::read
+     * \see  require_color_space<rgb_pixel>, require_color_space<rgba_pixel>
+     */
     template< typename pixel >
-    class require_color_space
-        : public io_transform
+    struct require_color_space
     {
-    public:
         void operator()(io_base& io) const;
     };
 
-    // require_color_space class template specializations
-    // for various pixel types
-
+    /**
+     * \brief  Enforces image color space.  Specialization for rgb_pixel pixel
+     * type.
+     *
+     * Checks image color_type and bit depth.  Throws error on mismatch.
+     */
     template<>
-    inline void
-    require_color_space< rgb_pixel >::operator()(io_base& io) const
+    struct require_color_space< rgb_pixel >
     {
-        if (io.get_color_type() != color_type_rgb
-            || io.get_bit_depth()
-               != pixel_traits< rgb_pixel >::get_bit_depth())
+        void operator()(io_base& io) const
         {
-            throw error("RGB color space required");
+            if (io.get_color_type() != color_type_rgb
+                || io.get_bit_depth()
+                   != pixel_traits< rgb_pixel >::get_bit_depth())
+            {
+                throw error("RGB color space required");
+            }
         }
-    }
+    };
 
+    /**
+     * \brief  Enforces image color space.  Specialization for rgba_pixel pixel
+     * type.
+     *
+     * Checks image color_type and bit depth.  Throws error on mismatch.
+     */
     template<>
-    inline void
-    require_color_space< rgba_pixel >::operator()(io_base& io) const
+    struct require_color_space< rgba_pixel >
     {
-        if (io.get_color_type() != color_type_rgba
-            || io.get_bit_depth()
-               != pixel_traits< rgba_pixel >::get_bit_depth())
+        void operator()(io_base& io) const
         {
-            throw error("RGBA color space required");
+            if (io.get_color_type() != color_type_rgba
+                || io.get_bit_depth()
+                   != pixel_traits< rgba_pixel >::get_bit_depth())
+            {
+                throw error("RGBA color space required");
+            }
         }
-    }
+    };
 
 } // namespace png
 

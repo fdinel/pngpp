@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -37,16 +37,26 @@
 namespace png
 {
 
+    /**
+     * \brief  RGBA pixel type.
+     */
     struct rgba_pixel
     {
-        explicit rgba_pixel(byte red   = 0,
-                            byte green = 0,
-                            byte blue  = 0,
-                            byte alpha = 0)
-            : red(red),
-              green(green),
-              blue(blue),
-              alpha(alpha)
+        /**
+         * Default constructor.  Initializes all components with zeros.
+         */
+        rgba_pixel()
+            : red(0), green(0), blue(0), alpha(0)
+        {
+        }
+
+        /**
+         * Constructs rgba_pixel object from \a red, \a green, \a blue and \a
+         * alpha components passed as parameters.  Alpha defaults to full
+         * opacity.
+         */
+        rgba_pixel(byte red, byte green, byte blue, byte alpha = 0xff)
+            : red(red), green(green), blue(blue), alpha(alpha)
         {
         }
 
@@ -56,19 +66,22 @@ namespace png
         byte alpha;
     };
 
+    /**
+     * \brief  Pixel traits specialization for rgb_pixel.
+     */
     template<>
-    inline int
-    pixel_traits< rgba_pixel >::get_bit_depth(void)
+    struct pixel_traits< rgba_pixel >
     {
-        return 8;
-    }
+        static color_type get_color_type()
+        {
+            return color_type_rgba;
+        }
 
-    template<>
-    inline color_type
-    pixel_traits< rgba_pixel >::get_color_type(void)
-    {
-        return color_type_rgba;
-    }
+        static int get_bit_depth()
+        {
+            return 8;
+        }
+    };
 
 } // namespace png
 

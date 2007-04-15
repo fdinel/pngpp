@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -36,11 +36,19 @@
 namespace png
 {
 
+    /**
+     * \brief  Pixel traits class template.
+     *
+     * Provides information about pixel color type and components bit depth.
+     * Not implemented -- see specializations.
+     *
+     * \see  pixel_traits<rgb_pixel>, pixel_traits<rgba_pixel>
+     */
     template< typename pixel >
     struct pixel_traits
     {
-        static int get_bit_depth(void);
-        static color_type get_color_type(void);
+        static color_type get_color_type();
+        static int get_bit_depth();
     };
 
 } // namespace png

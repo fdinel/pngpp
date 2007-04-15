@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -49,7 +49,7 @@ namespace png
         typedef typename pixbuf::row row;
         typedef convert_color_space< pixel > transform_convert;
 
-        image(void)
+        image()
         {
         }
 
@@ -177,12 +177,12 @@ namespace png
         //////////////////////////////////////////////////////////////////////
         // buffer accessors
         //
-        pixbuf& get_pixbuf(void)
+        pixbuf& get_pixbuf()
         {
             return m_pixbuf;
         }
         
-        pixbuf const& get_pixbuf(void) const
+        pixbuf const& get_pixbuf() const
         {
             return m_pixbuf;
         }
@@ -192,12 +192,12 @@ namespace png
             m_pixbuf = buffer;
         }
 
-        size_t get_width(void) const
+        size_t get_width() const
         {
             return m_pixbuf.get_width();
         }
 
-        size_t get_height(void) const
+        size_t get_height() const
         {
             return m_pixbuf.get_height();
         }

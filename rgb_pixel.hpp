@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -37,14 +37,25 @@
 namespace png
 {
 
+    /**
+     * \brief  RGB pixel type.
+     */
     struct rgb_pixel
     {
-        explicit rgb_pixel(byte red   = 0,
-                           byte green = 0,
-                           byte blue  = 0)
-            : red(red),
-              green(green),
-              blue(blue)
+        /**
+         * Default constructor.  Initializes all components with zeros.
+         */
+        rgb_pixel()
+            : red(0), green(0), blue(0)
+        {
+        }
+
+        /**
+         * Constructs rgb_pixel object from \a red, \a green and \a blue
+         * components passed as parameters.
+         */
+        rgb_pixel(byte red, byte green, byte blue)
+            : red(red), green(green), blue(blue)
         {
         }
 
@@ -53,19 +64,22 @@ namespace png
         byte blue;
     };
 
+    /**
+     * \brief  Pixel traits specialization for rgb_pixel.
+     */
     template<>
-    inline int
-    pixel_traits< rgb_pixel >::get_bit_depth(void)
+    struct pixel_traits< rgb_pixel >
     {
-        return 8;
-    }
+        static color_type get_color_type()
+        {
+            return color_type_rgb;
+        }
 
-    template<>
-    inline color_type
-    pixel_traits< rgb_pixel >::get_color_type(void)
-    {
-        return color_type_rgb;
-    }
+        static int get_bit_depth()
+        {
+            return 8;
+        }
+    };
 
 } // namespace png
 

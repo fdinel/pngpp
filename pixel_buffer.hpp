@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -44,7 +44,7 @@ namespace png
     public:
         typedef std::vector< pixel > row;
 
-        pixel_buffer(void)
+        pixel_buffer()
             : m_width(0),
               m_height(0)
         {
@@ -57,12 +57,12 @@ namespace png
             resize(width, height);
         }
 
-        size_t get_width(void) const
+        size_t get_width() const
         {
             return m_width;
         }
 
-        size_t get_height(void) const
+        size_t get_height() const
 	    {
             return m_height;
 	    }

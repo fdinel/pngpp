@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -44,7 +44,6 @@
 #include "reader.hpp"
 #include "writer.hpp"
 #include "pixel_buffer.hpp"
-#include "io_transform.hpp"
 #include "require_color_space.hpp"
 #include "convert_color_space.hpp"
 #include "image.hpp"

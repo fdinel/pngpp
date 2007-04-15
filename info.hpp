@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -46,42 +46,42 @@ namespace png
         {
         }
 
-        void read(void)
+        void read()
         {
             png_read_info(m_png, m_info);
         }
 
-        void write(void) const
+        void write() const
         {
             png_write_info(m_png, m_info);
         }
 
-        void update(void)
+        void update()
         {
             assert(m_png);
             assert(m_info);
             png_read_update_info(m_png, m_info);
         }
 
-        size_t get_width(void) const
+        size_t get_width() const
         {
             assert(m_info);
             return m_info->width;
         }
         
-        size_t get_height(void) const
+        size_t get_height() const
         {
             assert(m_info);
             return m_info->height;
         }
 
-        color_type get_color_type(void) const
+        color_type get_color_type() const
         {
             assert(m_info);
             return color_type(m_info->color_type);
         }
 
-        int get_bit_depth(void) const
+        int get_bit_depth() const
         {
             assert(m_info);
             return m_info->bit_depth;
@@ -89,7 +89,6 @@ namespace png
 
         struct header
         {
-        public:
             explicit header(uint_32 width = 0,
                             uint_32 height = 0,
                             int bit_depth = 0,
@@ -117,7 +116,7 @@ namespace png
             filter_type filter;
         };
 
-        header get_header(void) const
+        header get_header() const
         {
             header hdr;
             get_header(hdr);

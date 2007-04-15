@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (C) 2007   Alex Shulgin
  *
  * This file is part of png++ the C++ wrapper for libpng.  Png++ is free
@@ -51,26 +51,25 @@ namespace png
             png_set_write_fn(m_png, & stream, write_data, flush_data);
         }
 
-        ~writer(void)
+        ~writer()
         {
-            m_info.destroy();
             m_end_info.destroy();
-            png_destroy_write_struct(& m_png, 0);
+            png_destroy_write_struct(& m_png, m_info.get_png_info_ptr());
         }
 
-        void write_png(void) const
+        void write_png() const
         {
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
             png_write_png(m_png,
-                          m_info.get_png_struct(),
+                          m_info.get_png_info(),
                           /* transforms = */ 0,
                           /* params = */ 0);
         }
 
-        void write_info(void) const
+        void write_info() const
         {
             if (setjmp(m_png->jmpbuf))
             {
@@ -102,7 +101,7 @@ namespace png
             }
         }
 
-        void write_end_info(void) const
+        void write_end_info() const
         {
             if (setjmp(m_png->jmpbuf))
             {
