@@ -98,8 +98,8 @@ namespace png
         /**
          * \brief  Reads the whole PNG image data into a pixel buffer.
          */
-        template< typename pixbuf >
-        void read_image(pixbuf& buf)
+        template< typename pixels >
+        void read_pixels(pixels& pix)
         {
             if (setjmp(m_png->jmpbuf))
             {
@@ -117,11 +117,13 @@ namespace png
 #endif
             while (pass-- > 0)
             {
-                for (size_t row = 0; row < buf.get_height(); ++row)
+                pix.reset(pass);
+
+                while (!pix.end())
                 {
-                    byte* pixels
-                        = reinterpret_cast< byte* >(& buf.get_row(row).at(0));
-                    png_read_row(m_png, pixels, 0);
+                    png_read_row(m_png,
+                                 reinterpret_cast< byte* >(& pix.get_row()[0]),
+                                 0);
                 }
             }
         }

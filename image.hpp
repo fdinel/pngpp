@@ -43,16 +43,18 @@ namespace png
     /**
      * \brief  Class template to represent PNG image.
      */
-    template< typename pixel,
-              class traits = pixel_traits< pixel >,
-              class pixbuf = pixel_buffer< pixel > >
+    template< typename pixel >
     class image
     {
     public:
+        typedef pixel_traits< pixel > pix_traits;
+        typedef pixel_buffer< pixel > pixbuf;
+
         /**
          * \brief  Represents a row of image pixel data.
          */
         typedef typename pixbuf::row row;
+
         /**
          * \brief  A transformation functor to convert any image to
          * appropriate color space.
@@ -194,11 +196,16 @@ namespace png
         {
             reader rd(stream);
             rd.read_info();
+
             transform(rd);
             rd.update_info();
+
             rd.get_header(m_info_header);
             m_pixbuf.resize(rd.get_width(), rd.get_height());
-            rd.read_image(m_pixbuf);
+
+            read_adapter adapter(m_pixbuf);
+            rd.read_pixels(adapter);
+
             rd.read_end_info();
         }
 
@@ -232,8 +239,8 @@ namespace png
             writer wr(stream);
             m_info_header.width = m_pixbuf.get_width();
             m_info_header.height = m_pixbuf.get_height();
-            m_info_header.bit_depth = traits::get_bit_depth();
-            m_info_header.color = traits::get_color_type();
+            m_info_header.bit_depth = pix_traits::get_bit_depth();
+            m_info_header.color = pix_traits::get_color_type();
             wr.set_header(m_info_header);
             wr.write_info();
             wr.write_image(m_pixbuf);
@@ -291,6 +298,40 @@ namespace png
         }
 
     protected:
+        class read_adapter
+        {
+        public:
+            explicit read_adapter(pixbuf& pixels)
+                : m_pixbuf(pixels),
+                  m_pos(0)
+            {
+            }
+
+            void put_row(row const& r)
+            {
+                m_pixbuf.put_row(m_pos++, r);
+            }
+
+            row& get_row()
+            {
+                return m_pixbuf.get_row(m_pos++);
+            }
+
+            void reset(int /*pass*/)
+            {
+                m_pos = 0;
+            }
+
+            bool end()
+            {
+                return m_pos == m_pixbuf.get_height();
+            }
+
+        private:
+            pixbuf& m_pixbuf;
+            size_t m_pos;
+        };
+
         pixbuf m_pixbuf;
 
     private:

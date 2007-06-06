@@ -102,10 +102,15 @@ namespace png
         {
             return m_rows.at(index);
         }
-        
+
         row const& get_row(int index) const
         {
             return m_rows.at(index);
+        }
+
+        void put_row(int index, row const& r)
+        {
+            m_rows.at(index) = r;
         }
 
         pixel get_pixel(int x, int y) const
