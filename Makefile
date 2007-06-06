@@ -28,7 +28,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-version := 0.1.1
+version := 0.2.0
 
 ifndef PREFIX
 PREFIX := /usr/local
@@ -70,7 +70,12 @@ install:
 	cp *.hpp $(PREFIX)/include/png++
 
 dist:
-	tar -zcf png++-$(version).tar.gz --exclude=.svn $(dist_files)
+	rm -rf png++-$(version)
+	mkdir png++-$(version)
+	cp -r $(dist_files) png++-$(version)/
+	-rm png++-$(version).tar.gz
+	tar -zcf png++-$(version).tar.gz --exclude=.svn png++-$(version)/
+	rm -rf png++-$(version)
 
 clean:
 	rm -f $(targets)
