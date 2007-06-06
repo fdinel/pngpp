@@ -40,6 +40,11 @@
 namespace png
 {
 
+    /**
+     * \brief  Base class for PNG reader/writer classes.
+     *
+     * \see  reader, writer
+     */
     class io_base
     {
         io_base(io_base const&);
@@ -118,10 +123,6 @@ namespace png
             m_info.set_header(hdr);
         }
 
-        //////////////////////////////////////////////////////////////////////
-        // pixel transformations
-        // color space transformations
-        //
 #if defined(PNG_READ_EXPAND_SUPPORTED)
         void set_gray_1_2_4_to_8() const
         {
@@ -207,9 +208,6 @@ namespace png
 #endif
 #endif // PNG_READ_FILLER_SUPPORTED || PNG_WRITE_FILLER_SUPPORTED
 
-        //////////////////////////////////////////////////////////////////////
-        // byte order and packing transformations
-        //
 #if defined(PNG_READ_SWAP_SUPPORTED) || defined(PNG_WRITE_SWAP_SUPPORTED)
         void set_swap() const
         {
@@ -254,7 +252,8 @@ namespace png
             if (get_color_type() != color_type_gray
                 || get_color_type() != color_type_gray_alpha)
             {
-                throw error("set_shift: expected Gray or Gray+Alpha color type");
+                throw error("set_shift: expected Gray or Gray+Alpha"
+                            " color type");
             }
             color bits;
             bits.gray = gray_bits;

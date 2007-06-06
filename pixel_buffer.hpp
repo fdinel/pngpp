@@ -38,18 +38,30 @@
 namespace png
 {
 
+    /**
+     * \brief  Class template which represents image pixel data.
+     */
     template< typename pixel >
     class pixel_buffer
     {
     public:
+        /**
+         * \brief  A row of pixel data.
+         */
         typedef std::vector< pixel > row;
 
+        /**
+         * \brief  Constructs an empty 0x0 pixel buffer object.
+         */
         pixel_buffer()
             : m_width(0),
               m_height(0)
         {
         }
 
+        /**
+         * \brief  Constructs an empty pixel buffer object.
+         */
         pixel_buffer(size_t width, size_t height)
             : m_width(0),
               m_height(0)
@@ -67,6 +79,12 @@ namespace png
             return m_height;
 	    }
 
+        /**
+         * \brief  Resizes the pixel buffer.
+         *
+         * If new width or height is greater than the original,
+         * expanded pixels are filled with value of \a pixel().
+         */
         void resize(size_t width, size_t height)
         {
             m_width = width;

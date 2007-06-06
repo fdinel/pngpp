@@ -38,10 +38,19 @@
 namespace png
 {
 
+    /**
+     * \brief  PNG writer class.
+     *
+     * \see  image, writer, io_base
+     */
     class writer
         : public io_base
     {
     public:
+        /**
+         * \brief  Constructs a writer prepared to write PNG image into
+         * a \a stream.
+         */
         explicit writer(std::ostream& stream)
             : io_base(png_create_write_struct(PNG_LIBPNG_VER_STRING,
                                               static_cast< io_base* >(this),
@@ -69,6 +78,9 @@ namespace png
                           /* params = */ 0);
         }
 
+        /**
+         * \brief  Write info about PNG image.
+         */
         void write_info() const
         {
             if (setjmp(m_png->jmpbuf))
@@ -78,6 +90,9 @@ namespace png
             m_info.write();
         }
 
+        /**
+         * \brief  Writes the whole PNG image data from a pixel buffer.
+         */
         template< typename pixbuf >
         void write_image(pixbuf& buf) const
         {
@@ -101,6 +116,9 @@ namespace png
             }
         }
 
+        /**
+         * \brief  Reads endinig info about PNG image.
+         */
         void write_end_info() const
         {
             if (setjmp(m_png->jmpbuf))
@@ -133,6 +151,7 @@ namespace png
             catch (...)
             {
                 assert(!"caught something wrong");
+                wr->set_error("write_data: caught something wrong");
             }
             if (wr->is_error())
             {
@@ -162,6 +181,7 @@ namespace png
             catch (...)
             {
                 assert(!"caught something wrong");
+                wr->set_error("flush_data: caught something wrong");
             }
             if (wr->is_error())
             {

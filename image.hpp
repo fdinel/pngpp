@@ -40,32 +40,53 @@
 namespace png
 {
 
+    /**
+     * \brief  Class template to represent PNG image.
+     */
     template< typename pixel,
               class traits = pixel_traits< pixel >,
               class pixbuf = pixel_buffer< pixel > >
     class image
     {
     public:
+        /**
+         * \brief  Represents a row of image pixel data.
+         */
         typedef typename pixbuf::row row;
+        /**
+         * \brief  A transformation functor to convert any image to
+         * appropriate color space.
+         */
         typedef convert_color_space< pixel > transform_convert;
 
+        /**
+         * \brief  Constructs an empty image.
+         */
         image()
         {
         }
 
+        /**
+         * \brief  Constructs an empty image of specified width and height.
+         */
         image(size_t width, size_t height)
             : m_pixbuf(width, height)
         {
         }
 
-        //////////////////////////////////////////////////////////////////////
-        // reading constructors
-        //
+        /**
+         * \brief  Constructs an image reading data from specified file
+         * using default converting transform.
+         */
         explicit image(std::string const& filename)
         {
             read(filename, transform_convert());
         }
 
+        /**
+         * \brief  Constructs an image reading data from specified file
+         * using custom transformaton.
+         */
         template< class transformation >
         explicit image(std::string const& filename,
                        transformation const& transform)
@@ -73,47 +94,76 @@ namespace png
             read(filename.c_str(), transform);
         }
 
+        /**
+         * \brief  Constructs an image reading data from specified file
+         * using default converting transform.
+         */
         explicit image(char const* filename)
         {
             read(filename, transform_convert());
         }
 
+        /**
+         * \brief  Constructs an image reading data from specified file
+         * using custom transformaton.
+         */
         template< class transformation >
         explicit image(char const* filename, transformation const& transform)
         {
             read(filename, transform);
         }
 
+        /**
+         * \brief  Constructs an image reading data from a stream using
+         * default converting transform.
+         */
         explicit image(std::istream& stream)
         {
             read(stream, transform_convert());
         }
 
+        /**
+         * \brief  Constructs an image reading data from a stream using
+         * custom transformation.
+         */
         template< class transformation >
         explicit image(std::istream& stream, transformation const& transform)
         {
             read(stream, transform);
         }
 
-        //////////////////////////////////////////////////////////////////////
-        // io methods
-        //
+        /**
+         * \brief  Reads an image from specified file using default
+         * converting transform.
+         */
         void read(std::string const& filename)
         {
             read(filename, transform_convert());
         }
 
+        /**
+         * \brief  Reads an image from specified file using custom
+         * transformaton.
+         */
         template< class transformation >
         void read(std::string const& filename, transformation const& transform)
         {
             read(filename.c_str(), transform);
         }
 
+        /**
+         * \brief  Reads an image from specified file using default
+         * converting transform.
+         */
         void read(char const* filename)
         {
             read(filename, transform_convert());
         }
 
+        /**
+         * \brief  Reads an image from specified file using custom
+         * transformaton.
+         */
         template< class transformation >
         void read(char const* filename, transformation const& transform)
         {
@@ -126,11 +176,19 @@ namespace png
             read(stream, transform);
         }
 
+        /**
+         * \brief  Reads an image from a stream using default
+         * converting transform.
+         */
         void read(std::istream& stream)
         {
             read(stream, transform_convert());
         }
 
+        /**
+         * \brief  Reads an image from a stream using custom
+         * transformation.
+         */
         template< class transformation >
         void read(std::istream& stream, transformation const& transform)
         {
@@ -144,12 +202,17 @@ namespace png
             rd.read_end_info();
         }
 
-        // no `const' write methods due to non-const buffer in `png_write_row'
+        /**
+         * \brief  Writes an image to specified file.
+         */
         void write(std::string const& filename)
         {
             write(filename.c_str());
         }
 
+        /**
+         * \brief  Writes an image to specified file.
+         */
         void write(char const* filename)
         {
             std::ofstream stream(filename, std::ios::binary);
@@ -161,6 +224,9 @@ namespace png
             write(stream);
         }
 
+        /**
+         * \brief  Writes an image to a stream.
+         */
         void write(std::ostream& stream)
         {
             writer wr(stream);
@@ -174,9 +240,6 @@ namespace png
             wr.write_end_info();
         }
 
-        //////////////////////////////////////////////////////////////////////
-        // buffer accessors
-        //
         pixbuf& get_pixbuf()
         {
             return m_pixbuf;

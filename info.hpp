@@ -37,6 +37,9 @@
 namespace png
 {
 
+    /**
+     * \brief  Holds information about PNG image.
+     */
     class info
         : public info_base
     {
@@ -63,30 +66,47 @@ namespace png
             png_read_update_info(m_png, m_info);
         }
 
+        /**
+         * \biref  Returns image width.
+         */
         size_t get_width() const
         {
             assert(m_info);
             return m_info->width;
         }
-        
+
+        /**
+         * \biref  Returns image height.
+         */
         size_t get_height() const
         {
             assert(m_info);
             return m_info->height;
         }
 
+        /**
+         * \biref  Returns image color space type.
+         *
+         * \see  color_type
+         */
         color_type get_color_type() const
         {
             assert(m_info);
             return color_type(m_info->color_type);
         }
 
+        /**
+         * \biref  Returns image bit depth.
+         */
         int get_bit_depth() const
         {
             assert(m_info);
             return m_info->bit_depth;
         }
 
+        /**
+         * \brief  Represents PNG IHDR chunk.
+         */
         struct header
         {
             explicit header(uint_32 width = 0,
@@ -136,6 +156,10 @@ namespace png
                          reinterpret_cast< int* >(& hdr.filter));
         }
 
+        /**
+         * \brief  Sets all info about PNG image at once.  Calls \a
+         * png_set_IHDR() directly.
+         */
         void set_header(header const& hdr)
         {
             png_set_IHDR(m_png,

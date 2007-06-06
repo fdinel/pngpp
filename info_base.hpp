@@ -38,6 +38,9 @@
 namespace png
 {
 
+    /**
+     * \brief  Internal class to hold PNG info or end_info.
+     */
     class info_base
     {
         info_base(info_base const&);

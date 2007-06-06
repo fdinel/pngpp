@@ -38,10 +38,19 @@
 namespace png
 {
 
+    /**
+     * \brief  PNG reader class.
+     *
+     * \see  image, writer, io_base
+     */
     class reader
         : public io_base
     {
     public:
+        /**
+         * \brief  Constructs a reader prepared to read PNG image from
+         * a \a stream.
+         */
         explicit reader(std::istream& stream)
             : io_base(png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                              static_cast< io_base* >(this),
@@ -58,6 +67,10 @@ namespace png
                                     m_end_info.get_png_info_ptr());
         }
 
+        /**
+         * \brief  Reads the whole PNG data stream into memory.  Not
+         * particularly useful.
+         */
         void read_png()
         {
             if (setjmp(m_png->jmpbuf))
@@ -70,6 +83,9 @@ namespace png
                          /* params = */ 0);
         }
 
+        /**
+         * \brief  Reads info about PNG image.
+         */
         void read_info()
         {
             if (setjmp(m_png->jmpbuf))
@@ -79,6 +95,9 @@ namespace png
             m_info.read();
         }
 
+        /**
+         * \brief  Reads the whole PNG image data into a pixel buffer.
+         */
         template< typename pixbuf >
         void read_image(pixbuf& buf)
         {
@@ -107,6 +126,9 @@ namespace png
             }
         }
 
+        /**
+         * \brief  Reads endinig info about PNG image.
+         */
         void read_end_info()
         {
             if (setjmp(m_png->jmpbuf))
