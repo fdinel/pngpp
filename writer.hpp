@@ -93,8 +93,8 @@ namespace png
         /**
          * \brief  Writes the whole PNG image data from a pixel buffer.
          */
-        template< typename pixbuf >
-        void write_image(pixbuf& buf) const
+        template< typename pixels >
+        void write_pixels(pixels& pix) const
         {
             if (setjmp(m_png->jmpbuf))
             {
@@ -107,11 +107,11 @@ namespace png
 #endif
             while (pass-- > 0)
             {
-                for (size_t row = 0; row < buf.get_height(); ++row)
+                pix.reset(pass);
+                while (!pix.end())
                 {
-                    byte* pixels
-                        = reinterpret_cast< byte* >(& buf.get_row(row).at(0));
-                    png_write_row(m_png, pixels);
+                    png_write_row(m_png,
+                                  reinterpret_cast< byte* >(& pix.next()[0]));
                 }
             }
         }

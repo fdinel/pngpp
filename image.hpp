@@ -203,7 +203,7 @@ namespace png
             rd.get_header(m_info_header);
             m_pixbuf.resize(rd.get_width(), rd.get_height());
 
-            read_adapter adapter(m_pixbuf);
+            io_adapter adapter(m_pixbuf);
             rd.read_pixels(adapter);
 
             rd.read_end_info();
@@ -243,7 +243,10 @@ namespace png
             m_info_header.color = pix_traits::get_color_type();
             wr.set_header(m_info_header);
             wr.write_info();
-            wr.write_image(m_pixbuf);
+
+            io_adapter adapter(m_pixbuf);
+            wr.write_pixels(adapter);
+
             wr.write_end_info();
         }
 
@@ -298,21 +301,16 @@ namespace png
         }
 
     protected:
-        class read_adapter
+        class io_adapter
         {
         public:
-            explicit read_adapter(pixbuf& pixels)
+            explicit io_adapter(pixbuf& pixels)
                 : m_pixbuf(pixels),
                   m_pos(0)
             {
             }
 
-            void put_row(row const& r)
-            {
-                m_pixbuf.put_row(m_pos++, r);
-            }
-
-            row& get_row()
+            row& next()
             {
                 return m_pixbuf.get_row(m_pos++);
             }
