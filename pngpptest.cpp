@@ -47,6 +47,6 @@ try
 }
 catch (std::exception const& error)
 {
-    std::cerr << "test: " << error.what() << std::endl;
+    std::cerr << "pngpptest: " << error.what() << std::endl;
     return EXIT_FAILURE;
 }
