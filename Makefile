@@ -69,7 +69,7 @@ install:
 	mkdir -p $(PREFIX)/include/png++
 	cp *.hpp $(PREFIX)/include/png++
 
-dist:
+dist: test-clean
 	rm -rf png++-$(version)
 	mkdir png++-$(version)
 	cp -r $(dist_files) png++-$(version)/
@@ -83,10 +83,12 @@ clean:
 thorough-clean: clean test-clean
 
 test: $(target_test)
-	./$(target_test) test/*.png
+	for i in test/*.png; do \
+		./$(target_test) $$i $$i.out; \
+	done
 
 test-clean:
-	rm -f *.png
+	rm -f test/*.out
 
 .PHONY: all install dist clean thorough-clean test test-clean
 
