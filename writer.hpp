@@ -96,18 +96,28 @@ namespace png
         template< typename pixels >
         void write_pixels(pixels& pix) const
         {
+            size_t pass_count;
+            if (m_info.get_header().interlace != interlace_none)
+            {
+#ifdef PNG_WRITE_INTERLACING_SUPPORTED
+                pass_count = set_interlace_handling();
+#else
+                throw error("Cannot write interlaced image"
+                            " -- interlace handling disabled.");
+#endif
+            }
+            else
+            {
+                pass_count = 1;
+            }
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
-#ifdef PNG_WRITE_INTERLACING_SUPPORTED
-            int pass = set_interlace_handling();
-#else
-            int pass = 1;
-#endif
-            while (pass-- > 0)
+            for (size_t pass = 0; pass < pass_count; ++pass)
             {
                 pix.reset(pass);
+
                 while (!pix.end())
                 {
                     png_write_row(m_png,
@@ -117,7 +127,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads endinig info about PNG image.
+         * \brief  Reads ending info about PNG image.
          */
         void write_end_info() const
         {

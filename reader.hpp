@@ -55,7 +55,8 @@ namespace png
             : io_base(png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                              static_cast< io_base* >(this),
                                              raise_error,
-                                             0))
+                                             0)),
+              m_pass_count(0)
         {
             png_set_read_fn(m_png, & stream, read_data);
         }
@@ -101,21 +102,15 @@ namespace png
         template< typename pixels >
         void read_pixels(pixels& pix)
         {
+            if (!m_pass_count)
+            {
+                setup_pass_count();
+            }
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
-#ifdef PNG_READ_INTERLACING_SUPPORTED
-            int pass = set_interlace_handling();
-#else
-            if (m_png->interlaced)
-            {
-                throw error("Cannot read interlaced image"
-                            " -- interlace handling disabled.");
-            }
-            int pass = 1;
-#endif
-            while (pass-- > 0)
+            for (size_t pass = 0; pass < m_pass_count; ++pass)
             {
                 pix.reset(pass);
 
@@ -142,7 +137,32 @@ namespace png
 
         void update_info()
         {
+            // interlace handling _must_ be set up prior to info update
+            if (!m_pass_count)
+            {
+                setup_pass_count();
+            }
             m_info.update();
+        }
+
+    protected:
+        size_t m_pass_count;
+
+        void setup_pass_count()
+        {
+            if (m_info.get_header().interlace != interlace_none)
+            {
+#ifdef PNG_READ_INTERLACING_SUPPORTED
+                m_pass_count = set_interlace_handling();
+#else
+                throw error("Cannot read interlaced image"
+                            " -- interlace handling disabled.");
+#endif
+            }
+            else
+            {
+                m_pass_count = 1;
+            }
         }
 
     private:
