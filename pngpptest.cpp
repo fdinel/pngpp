@@ -40,9 +40,17 @@ try
 {
     for (char** arg = argv; *++arg;)
     {
-        png::image< png::rgba_pixel > image(*arg);
-        std::stringstream output;
-        image.write(output);
+        try
+        {
+            png::image< png::rgba_pixel > image(*arg);
+            std::stringstream output;
+            image.write(output);
+        }
+        catch (png::error const& error)
+        {
+            std::cerr << "pngpptest: " << *arg << ": "
+                      << error.what() << std::endl;
+        }
     }
 }
 catch (std::exception const& error)
