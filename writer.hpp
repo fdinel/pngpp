@@ -97,7 +97,7 @@ namespace png
         void write_pixels(pixels& pix) const
         {
             size_t pass_count;
-            if (m_info.get_header().interlace != interlace_none)
+            if (get_interlace_type() != interlace_none)
             {
 #ifdef PNG_WRITE_INTERLACING_SUPPORTED
                 pass_count = set_interlace_handling();

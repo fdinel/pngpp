@@ -93,9 +93,19 @@ namespace png
             return m_info.get_width();
         }
 
+        void set_width(size_t width)
+        {
+            m_info.set_width(width);
+        }
+
         size_t get_height() const
         {
             return m_info.get_height();
+        }
+
+        void set_height(size_t height)
+        {
+            m_info.set_height(height);
         }
 
         color_type get_color_type() const
@@ -103,25 +113,52 @@ namespace png
             return m_info.get_color_type();
         }
 
+        void set_color_type(color_type color_space)
+        {
+            m_info.set_color_type(color_space);
+        }
+
         int get_bit_depth() const
         {
             return m_info.get_bit_depth();
         }
 
-        info::header get_header() const
+        void set_bit_depth(int bit_depth)
         {
-            return m_info.get_header();
+            m_info.set_bit_depth(bit_depth);
         }
 
-        void get_header(info::header& hdr) const
+        interlace_type get_interlace_type() const
         {
-            m_info.get_header(hdr);
+            return m_info.get_interlace_type();
         }
 
-        void set_header(info::header const& hdr)
+        void set_interlace_type(interlace_type interlace)
         {
-            m_info.set_header(hdr);
+            m_info.set_interlace_type(interlace);
         }
+
+        compression_type get_compression_type() const
+        {
+            return m_info.get_compression_type();
+        }
+
+        void set_compression_type(compression_type compression)
+        {
+            m_info.set_compression_type(compression);
+        }
+
+        filter_type get_filter_type() const
+        {
+            return m_info.get_filter_type();
+        }
+
+        void set_filter_type(filter_type filter)
+        {
+            m_info.set_filter_type(filter);
+        }
+
+        //////////////////////////////////////////////////////////////////////
 
 #if defined(PNG_READ_EXPAND_SUPPORTED)
         void set_gray_1_2_4_to_8() const

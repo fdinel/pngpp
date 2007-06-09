@@ -42,6 +42,7 @@ namespace png
 
     enum color_type
     {
+        color_type_none       = -1,
         color_type_gray       = PNG_COLOR_TYPE_GRAY,
         color_type_palette    = PNG_COLOR_TYPE_PALETTE,
         color_type_rgb        = PNG_COLOR_TYPE_RGB,

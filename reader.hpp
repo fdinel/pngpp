@@ -150,7 +150,7 @@ namespace png
 
         void setup_pass_count()
         {
-            if (m_info.get_header().interlace != interlace_none)
+            if (get_interlace_type() != interlace_none)
             {
 #ifdef PNG_READ_INTERLACING_SUPPORTED
                 m_pass_count = set_interlace_handling();

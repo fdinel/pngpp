@@ -45,17 +45,40 @@ namespace png
     {
     public:
         explicit info(png_struct* png)
-            : info_base(png)
+            : info_base(png),
+              m_width(0),
+              m_height(0),
+              m_bit_depth(0),
+              m_color_type(color_type_none),
+              m_interlace(interlace_none),
+              m_compression_type(compression_type_default),
+              m_filter_type(filter_type_default)
         {
         }
 
         void read()
         {
+            assert(m_png);
+            assert(m_info);
+
             png_read_info(m_png, m_info);
+            png_get_IHDR(m_png,
+                         m_info,
+                         & m_width,
+                         & m_height,
+                         & m_bit_depth,
+                         reinterpret_cast< int* >(& m_color_type),
+                         reinterpret_cast< int* >(& m_interlace),
+                         reinterpret_cast< int* >(& m_compression_type),
+                         reinterpret_cast< int* >(& m_filter_type));
         }
 
         void write() const
         {
+            assert(m_png);
+            assert(m_info);
+
+            sync_ihdr();
             png_write_info(m_png, m_info);
         }
 
@@ -63,115 +86,102 @@ namespace png
         {
             assert(m_png);
             assert(m_info);
+
+            sync_ihdr();
             png_read_update_info(m_png, m_info);
         }
 
-        /**
-         * \biref  Returns image width.
-         */
         size_t get_width() const
         {
-            assert(m_info);
-            return m_info->width;
+            return m_width;
         }
 
-        /**
-         * \biref  Returns image height.
-         */
+        void set_width(size_t width)
+        {
+            m_width = width;
+        }
+
         size_t get_height() const
         {
-            assert(m_info);
-            return m_info->height;
+            return m_height;
         }
 
-        /**
-         * \biref  Returns image color space type.
-         *
-         * \see  color_type
-         */
+        void set_height(size_t height)
+        {
+            m_height = height;
+        }
+
         color_type get_color_type() const
         {
-            assert(m_info);
-            return color_type(m_info->color_type);
+            return m_color_type;
         }
 
-        /**
-         * \biref  Returns image bit depth.
-         */
+        void set_color_type(color_type color_space)
+        {
+            m_color_type = color_space;
+        }
+
         int get_bit_depth() const
         {
-            assert(m_info);
-            return m_info->bit_depth;
+            return m_bit_depth;
         }
 
-        /**
-         * \brief  Represents PNG IHDR chunk.
-         */
-        struct header
+        void set_bit_depth(int bit_depth)
         {
-            explicit header(uint_32 width = 0,
-                            uint_32 height = 0,
-                            int bit_depth = 0,
-                            color_type color = color_type_gray,
-                            interlace_type interlace = interlace_none,
-                            compression_type compression
-                            = compression_type_default,
-                            filter_type filter = filter_type_default)
-                : width(width),
-                  height(height),
-                  bit_depth(bit_depth),
-                  color(color),
-                  interlace(interlace),
-                  compression(compression),
-                  filter(filter)
-            {
-            }
-
-            uint_32 width;
-            uint_32 height;
-            int bit_depth;
-            color_type color;
-            interlace_type interlace;
-            compression_type compression;
-            filter_type filter;
-        };
-
-        header get_header() const
-        {
-            header hdr;
-            get_header(hdr);
-            return hdr;
+            m_bit_depth = bit_depth;
         }
 
-        void get_header(header& hdr) const
+        interlace_type get_interlace_type() const
         {
-            png_get_IHDR(m_png,
-                         m_info,
-                         & hdr.width,
-                         & hdr.height,
-                         & hdr.bit_depth,
-                         reinterpret_cast< int* >(& hdr.color),
-                         reinterpret_cast< int* >(& hdr.interlace),
-                         reinterpret_cast< int* >(& hdr.compression),
-                         reinterpret_cast< int* >(& hdr.filter));
+            return m_interlace;
         }
 
-        /**
-         * \brief  Sets all info about PNG image at once.  Calls \a
-         * png_set_IHDR() directly.
-         */
-        void set_header(header const& hdr)
+        void set_interlace_type(interlace_type interlace)
+        {
+            m_interlace = interlace;
+        }
+
+        compression_type get_compression_type() const
+        {
+            return m_compression_type;
+        }
+
+        void set_compression_type(compression_type compression)
+        {
+            m_compression_type = compression;
+        }
+
+        filter_type get_filter_type() const
+        {
+            return m_filter_type;
+        }
+
+        void set_filter_type(filter_type filter)
+        {
+            m_filter_type = filter;
+        }
+
+    protected:
+        void sync_ihdr(void) const
         {
             png_set_IHDR(m_png,
                          m_info,
-                         hdr.width,
-                         hdr.height,
-                         hdr.bit_depth,
-                         hdr.color,
-                         hdr.interlace,
-                         hdr.compression,
-                         hdr.filter);
+                         m_width,
+                         m_height,
+                         m_bit_depth,
+                         m_color_type,
+                         m_interlace,
+                         m_compression_type,
+                         m_filter_type);
         }
+
+        uint_32 m_width;
+        uint_32 m_height;
+        int m_bit_depth;
+        color_type m_color_type;
+        interlace_type m_interlace;
+        compression_type m_compression_type;
+        filter_type m_filter_type;
     };
 
 } // namespace png

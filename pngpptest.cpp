@@ -38,20 +38,16 @@ int
 main(int argc, char* argv[])
 try
 {
-    for (char** arg = argv; *++arg;)
+    if (argc != 3)
     {
-        try
-        {
-            png::image< png::rgba_pixel > image(*arg);
-            std::stringstream output;
-            image.write(output);
-        }
-        catch (png::error const& error)
-        {
-            std::cerr << "pngpptest: " << *arg << ": "
-                      << error.what() << std::endl;
-        }
+        std::cerr << "usage: pngpptest INFILE OUTFILE" << std::endl;
+        return EXIT_FAILURE;
     }
+    char const* infile = argv[1];
+    char const* outfile = argv[2];
+
+    png::image< png::rgba_pixel > image(infile);
+    image.write(outfile); //, png::convert_color_space< png::rgb_pixel >());
 }
 catch (std::exception const& error)
 {

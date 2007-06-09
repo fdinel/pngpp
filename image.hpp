@@ -62,6 +62,16 @@ namespace png
         typedef convert_color_space< pixel > transform_convert;
 
         /**
+         * \brief  A default output transformation: does nothing.
+         */
+        struct transform_identity
+        {
+            void operator()(io_base&) const
+            {
+            }
+        };
+
+        /**
          * \brief  Constructs an empty image.
          */
         image()
@@ -200,9 +210,7 @@ namespace png
             transform(rd);
             rd.update_info();
 
-            rd.get_header(m_info_header);
             m_pixbuf.resize(rd.get_width(), rd.get_height());
-
             io_adapter adapter(m_pixbuf);
             rd.read_pixels(adapter);
 
@@ -214,7 +222,17 @@ namespace png
          */
         void write(std::string const& filename)
         {
-            write(filename.c_str());
+            write(filename, transform_identity());
+        }
+
+        /**
+         * \brief  Writes an image to specified file.
+         */
+        template< class transformation >
+        void write(std::string const& filename,
+                   transformation const& transform)
+        {
+            write(filename.c_str(), transform);
         }
 
         /**
@@ -222,13 +240,22 @@ namespace png
          */
         void write(char const* filename)
         {
+            write(filename, transform_identity());
+        }
+
+        /**
+         * \brief  Writes an image to specified file.
+         */
+        template< class transformation >
+        void write(char const* filename, transformation const& transform)
+        {
             std::ofstream stream(filename, std::ios::binary);
             if (!stream.is_open())
             {
                 throw std_error(filename);
             }
             // FIXME: stream.exceptions(std::ios::badbit | std::ios::failbit);
-            write(stream);
+            write(stream, transform);
         }
 
         /**
@@ -236,13 +263,25 @@ namespace png
          */
         void write(std::ostream& stream)
         {
+            write(stream, transform_identity());
+        }
+
+        /**
+         * \brief  Writes an image to a stream.
+         */
+        template< class transformation >
+        void write(std::ostream& stream, transformation const& transform)
+        {
             writer wr(stream);
-            m_info_header.width = m_pixbuf.get_width();
-            m_info_header.height = m_pixbuf.get_height();
-            m_info_header.bit_depth = pix_traits::get_bit_depth();
-            m_info_header.color = pix_traits::get_color_type();
-            wr.set_header(m_info_header);
+            wr.set_width(m_pixbuf.get_width());
+            wr.set_height(m_pixbuf.get_height());
+            wr.set_bit_depth(pix_traits::get_bit_depth());
+            wr.set_color_type(pix_traits::get_color_type());
+            // TODO: interlacing etc.
             wr.write_info();
+
+            transform(wr);
+            //wr.write_info();
 
             io_adapter adapter(m_pixbuf);
             wr.write_pixels(adapter);
@@ -331,9 +370,6 @@ namespace png
         };
 
         pixbuf m_pixbuf;
-
-    private:
-        info::header m_info_header;
     };
 
 } // namespace png
