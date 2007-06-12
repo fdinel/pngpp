@@ -43,7 +43,8 @@ namespace png
     struct rgba_pixel
     {
         /**
-         * Default constructor.  Initializes all components with zeros.
+         * \brief  Default constructor.  Initializes all components
+         * with zeros.
          */
         rgba_pixel()
             : red(0), green(0), blue(0), alpha(0)
@@ -51,9 +52,9 @@ namespace png
         }
 
         /**
-         * Constructs rgba_pixel object from \a red, \a green, \a blue and \a
-         * alpha components passed as parameters.  Alpha defaults to full
-         * opacity.
+         * \brief  Constructs rgba_pixel object from \a red, \a green,
+         * \a blue and \a alpha components passed as parameters.
+         * Alpha defaults to full opacity.
          */
         rgba_pixel(byte red, byte green, byte blue, byte alpha = 0xff)
             : red(red), green(green), blue(blue), alpha(alpha)

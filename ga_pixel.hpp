@@ -43,7 +43,8 @@ namespace png
     struct ga_pixel
     {
         /**
-         * Default constructor.  Initializes all components with zeros.
+         * \brief   Default constructor.  Initializes all components
+         * with zeros.
          */
         ga_pixel()
             : value(0), alpha(0)
@@ -51,11 +52,11 @@ namespace png
         }
 
         /**
-         * Constructs ga_pixel object from \a value and \a alpha
-         * components passed as parameters.  Alpha defaults to full
-         * opacity.
+         * \brief  Constructs ga_pixel object from \a value and \a
+         * alpha components passed as parameters.  Alpha defaults to
+         * full opacity.
          */
-        ga_pixel(byte value, byte alpha = 0xff)
+        explicit ga_pixel(byte value, byte alpha = 0xff)
             : value(value), alpha(alpha)
         {
         }

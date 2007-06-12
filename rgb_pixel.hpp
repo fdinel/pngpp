@@ -43,7 +43,8 @@ namespace png
     struct rgb_pixel
     {
         /**
-         * Default constructor.  Initializes all components with zeros.
+         * \brief  Default constructor.  Initializes all components
+         * with zeros.
          */
         rgb_pixel()
             : red(0), green(0), blue(0)
@@ -51,8 +52,8 @@ namespace png
         }
 
         /**
-         * Constructs rgb_pixel object from \a red, \a green and \a blue
-         * components passed as parameters.
+         * \brief  Constructs rgb_pixel object from \a red, \a green
+         * and \a blue components passed as parameters.
          */
         rgb_pixel(byte red, byte green, byte blue)
             : red(red), green(green), blue(blue)
