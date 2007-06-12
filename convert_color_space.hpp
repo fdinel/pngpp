@@ -126,8 +126,8 @@ namespace png
 
         void operator()(writer& io) const
         {
-            io.set_color_type(pixel_traits< rgb_pixel >::get_color_type());
-            io.set_bit_depth(pixel_traits< rgb_pixel >::get_bit_depth());
+            io.set_color_type(pixel_traits< rgb_pixel >::color_space);
+            io.set_bit_depth(pixel_traits< rgb_pixel >::bit_depth);
         }
 
         void operator()(writer& io, color_type color_space, int bit_depth) const

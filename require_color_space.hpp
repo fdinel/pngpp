@@ -75,8 +75,8 @@ namespace png
     {
         void operator()(io_base& io) const
         {
-            if (io.get_color_type() != pixel_traits< pixel >::get_color_type()
-                || io.get_bit_depth() != pixel_traits< pixel >::get_bit_depth())
+            if (io.get_color_type() != pixel_traits< pixel >::color_space
+                || io.get_bit_depth() != pixel_traits< pixel >::bit_depth)
             {
                 throw error(wrong_color_space< pixel >::error_msg);
             }
