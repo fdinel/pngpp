@@ -50,7 +50,7 @@ namespace png
               m_height(0),
               m_bit_depth(0),
               m_color_type(color_type_none),
-              m_interlace(interlace_none),
+              m_interlace_type(interlace_none),
               m_compression_type(compression_type_default),
               m_filter_type(filter_type_default)
         {
@@ -68,7 +68,7 @@ namespace png
                          & m_height,
                          & m_bit_depth,
                          reinterpret_cast< int* >(& m_color_type),
-                         reinterpret_cast< int* >(& m_interlace),
+                         reinterpret_cast< int* >(& m_interlace_type),
                          reinterpret_cast< int* >(& m_compression_type),
                          reinterpret_cast< int* >(& m_filter_type));
         }
@@ -133,12 +133,12 @@ namespace png
 
         interlace_type get_interlace_type() const
         {
-            return m_interlace;
+            return m_interlace_type;
         }
 
         void set_interlace_type(interlace_type interlace)
         {
-            m_interlace = interlace;
+            m_interlace_type = interlace;
         }
 
         compression_type get_compression_type() const
@@ -170,7 +170,7 @@ namespace png
                          m_height,
                          m_bit_depth,
                          m_color_type,
-                         m_interlace,
+                         m_interlace_type,
                          m_compression_type,
                          m_filter_type);
         }
@@ -179,7 +179,7 @@ namespace png
         uint_32 m_height;
         int m_bit_depth;
         color_type m_color_type;
-        interlace_type m_interlace;
+        interlace_type m_interlace_type;
         compression_type m_compression_type;
         filter_type m_filter_type;
     };
