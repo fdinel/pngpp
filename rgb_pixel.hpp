@@ -71,15 +71,8 @@ namespace png
     template<>
     struct pixel_traits< rgb_pixel >
     {
-        static color_type get_color_type()
-        {
-            return color_type_rgb;
-        }
-
-        static int get_bit_depth()
-        {
-            return 8;
-        }
+        static color_type const color_space = color_type_rgb;
+        static int const bit_depth = 8;
     };
 
 } // namespace png

@@ -31,8 +31,6 @@
 #ifndef PNGPP_PIXEL_TRAITS_HPP_INCLUDED
 #define PNGPP_PIXEL_TRAITS_HPP_INCLUDED
 
-#include "types.hpp"
-
 namespace png
 {
 
@@ -47,8 +45,6 @@ namespace png
     template< typename pixel >
     struct pixel_traits
     {
-        static color_type get_color_type();
-        static int get_bit_depth();
     };
 
 } // namespace png

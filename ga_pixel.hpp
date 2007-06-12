@@ -31,6 +31,8 @@
 #ifndef PNGPP_GA_PIXEL_HPP_INCLUDED
 #define PNGPP_GA_PIXEL_HPP_INCLUDED
 
+#include <limits>
+
 #include "types.hpp"
 #include "pixel_traits.hpp"
 
@@ -40,46 +42,69 @@ namespace png
     /**
      * \brief  Gray+Alpha pixel type.
      */
-    struct ga_pixel
+    template< typename T >
+    struct basic_ga_pixel
     {
+        typedef pixel_traits< basic_ga_pixel< T > > traits;
+
         /**
          * \brief   Default constructor.  Initializes all components
          * with zeros.
          */
-        ga_pixel()
+        basic_ga_pixel()
             : value(0), alpha(0)
         {
         }
 
         /**
-         * \brief  Constructs ga_pixel object from \a value and \a
-         * alpha components passed as parameters.  Alpha defaults to
-         * full opacity.
+         * \brief  Constructs basic_ga_pixel object from \a value and
+         * \a alpha components passed as parameters.  Alpha defaults
+         * to full opacity.
          */
-        explicit ga_pixel(byte value, byte alpha = 0xff)
+        explicit basic_ga_pixel(T value,
+                                T alpha = traits::alpha_filler)
             : value(value), alpha(alpha)
         {
         }
 
-        byte value;
-        byte alpha;
+        T value;
+        T alpha;
     };
+
+    typedef basic_ga_pixel< byte > ga_pixel;
+    typedef basic_ga_pixel< uint_16 > ga_pixel_16;
+
+    namespace
+    {
+        template< typename T >
+        struct common_traits
+        {
+            static color_type const color_space = color_type_ga;
+
+            static int const bit_depth = std::numeric_limits< T >::digits;
+            static T const alpha_filler()
+            {
+                return std::numeric_limits< T >::max();
+            }
+        };
+    }
 
     /**
      * \brief  Pixel traits specialization for ga_pixel.
      */
     template<>
     struct pixel_traits< ga_pixel >
+        : common_traits< byte >
     {
-        static color_type get_color_type()
-        {
-            return color_type_ga;
-        }
+    };
 
-        static int get_bit_depth()
-        {
-            return 8;
-        }
+    /**
+     * \brief  Pixel traits specialization for ga_pixel.
+     */
+    template<>
+    struct pixel_traits< ga_pixel_16 >
+        : common_traits< uint_16 >
+    {
     };
 
 } // namespace png
