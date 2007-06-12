@@ -33,6 +33,7 @@
 
 #include "rgb_pixel.hpp"
 #include "rgba_pixel.hpp"
+#include "gray_pixel.hpp"
 #include "ga_pixel.hpp"
 
 namespace png
@@ -52,6 +53,9 @@ namespace png
 
         template<> char const* wrong_color_space< rgba_pixel >::error_msg =
             "RGBA color space required";
+
+        template<> char const* wrong_color_space< gray_pixel >::error_msg =
+            "Grayscale color space required";
 
         template<> char const* wrong_color_space< ga_pixel >::error_msg =
             "Gray+Alpha color space required";
