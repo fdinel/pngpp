@@ -289,8 +289,8 @@ namespace png
             writer wr(stream);
             wr.set_width(m_pixbuf.get_width());
             wr.set_height(m_pixbuf.get_height());
-            wr.set_color_type(pix_traits::get_color_type());
-            wr.set_bit_depth(pix_traits::get_bit_depth());
+            wr.set_color_type(pix_traits::color_space);
+            wr.set_bit_depth(pix_traits::bit_depth);
             wr.set_interlace_type(m_interlace_type);
             wr.set_compression_type(m_compression_type);
             wr.set_filter_type(m_filter_type);
@@ -298,8 +298,8 @@ namespace png
 //             transform(wr);
             wr.write_info();
 //             transform(wr,
-//                       pix_traits::get_color_type(),
-//                       pix_traits::get_bit_depth());
+//                       pix_traits::color_space,
+//                       pix_traits::bit_depth);
 
             io_adapter adapter(m_pixbuf);
             wr.write_pixels(adapter);
