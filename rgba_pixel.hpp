@@ -67,7 +67,7 @@ namespace png
     };
 
     /**
-     * \brief  Pixel traits specialization for rgb_pixel.
+     * \brief  Pixel traits specialization for rgba_pixel.
      */
     template<>
     struct pixel_traits< rgba_pixel >
