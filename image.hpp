@@ -66,16 +66,26 @@ namespace png
          */
         struct transform_identity
         {
-            void operator()(io_base&) const
-            {
-            }
+            void operator()(io_base&) const {}
         };
+
+        /**
+         * \brief  Sets default values for interlace type, compression
+         * type and filter type.
+         */
+        void set_defaults()
+        {
+            m_interlace_type = interlace_none;
+            m_compression_type = compression_type_default;
+            m_filter_type = filter_type_default;
+        }
 
         /**
          * \brief  Constructs an empty image.
          */
         image()
         {
+            set_defaults();
         }
 
         /**
@@ -84,6 +94,7 @@ namespace png
         image(size_t width, size_t height)
             : m_pixbuf(width, height)
         {
+            set_defaults();
         }
 
         /**
@@ -100,8 +111,8 @@ namespace png
          * using custom transformaton.
          */
         template< class transformation >
-        explicit image(std::string const& filename,
-                       transformation const& transform)
+        image(std::string const& filename,
+              transformation const& transform)
         {
             read(filename.c_str(), transform);
         }
@@ -120,7 +131,7 @@ namespace png
          * using custom transformaton.
          */
         template< class transformation >
-        explicit image(char const* filename, transformation const& transform)
+        image(char const* filename, transformation const& transform)
         {
             read(filename, transform);
         }
@@ -139,7 +150,7 @@ namespace png
          * custom transformation.
          */
         template< class transformation >
-        explicit image(std::istream& stream, transformation const& transform)
+        image(std::istream& stream, transformation const& transform)
         {
             read(stream, transform);
         }
@@ -206,6 +217,9 @@ namespace png
         {
             reader rd(stream);
             rd.read_info();
+            m_interlace_type = rd.get_interlace_type();
+            m_compression_type = rd.get_compression_type();
+            m_filter_type = rd.get_filter_type();
 
             transform(rd);
             rd.update_info();
@@ -275,13 +289,17 @@ namespace png
             writer wr(stream);
             wr.set_width(m_pixbuf.get_width());
             wr.set_height(m_pixbuf.get_height());
-            wr.set_bit_depth(pix_traits::get_bit_depth());
             wr.set_color_type(pix_traits::get_color_type());
-            // TODO: interlacing etc.
-            wr.write_info();
+            wr.set_bit_depth(pix_traits::get_bit_depth());
+            wr.set_interlace_type(m_interlace_type);
+            wr.set_compression_type(m_compression_type);
+            wr.set_filter_type(m_filter_type);
 
-            transform(wr);
-            //wr.write_info();
+//             transform(wr);
+            wr.write_info();
+//             transform(wr,
+//                       pix_traits::get_color_type(),
+//                       pix_traits::get_bit_depth());
 
             io_adapter adapter(m_pixbuf);
             wr.write_pixels(adapter);
@@ -339,6 +357,36 @@ namespace png
             m_pixbuf.set_pixel(x, y, p);
         }
 
+        interlace_type get_interlace_type() const
+        {
+            return m_interlace_type;
+        }
+
+        void set_interlace_type(interlace_type interlace)
+        {
+            m_interlace_type = interlace;
+        }
+
+        compression_type get_compression_type() const
+        {
+            return m_compression_type;
+        }
+
+        void set_compression_type(compression_type compression)
+        {
+            m_compression_type = compression;
+        }
+
+        filter_type get_filter_type() const
+        {
+            return m_filter_type;
+        }
+
+        void set_filter_type(filter_type filter)
+        {
+            m_filter_type = filter;
+        }
+
     protected:
         class io_adapter
         {
@@ -370,6 +418,9 @@ namespace png
         };
 
         pixbuf m_pixbuf;
+        interlace_type m_interlace_type;
+        compression_type m_compression_type;
+        filter_type m_filter_type;
     };
 
 } // namespace png
