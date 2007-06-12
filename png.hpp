@@ -37,6 +37,8 @@
 #include "error.hpp"
 #include "rgb_pixel.hpp"
 #include "rgba_pixel.hpp"
+#include "gray_pixel.hpp"
+#include "ga_pixel.hpp"
 #include "info_base.hpp"
 #include "info.hpp"
 #include "end_info.hpp"
