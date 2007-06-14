@@ -31,6 +31,8 @@
 #ifndef PNGPP_PIXEL_TRAITS_HPP_INCLUDED
 #define PNGPP_PIXEL_TRAITS_HPP_INCLUDED
 
+#include <limits>
+
 namespace png
 {
 
@@ -45,6 +47,20 @@ namespace png
     template< typename pixel >
     struct pixel_traits
     {
+    };
+
+    template< typename T, color_type CT >
+    struct basic_pixel_traits
+    {
+        typedef T component_type;
+
+        static color_type const color_space = CT;
+        static int const bit_depth = std::numeric_limits< T >::digits;
+
+        static T alpha_filler()
+        {
+            return std::numeric_limits< T >::max();
+        }
     };
 
 } // namespace png

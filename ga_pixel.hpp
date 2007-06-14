@@ -48,7 +48,7 @@ namespace png
         typedef pixel_traits< basic_ga_pixel< T > > traits;
 
         /**
-         * \brief   Default constructor.  Initializes all components
+         * \brief  Default constructor.  Initializes all components
          * with zeros.
          */
         basic_ga_pixel()
@@ -74,36 +74,29 @@ namespace png
     typedef basic_ga_pixel< byte > ga_pixel;
     typedef basic_ga_pixel< uint_16 > ga_pixel_16;
 
-    namespace
+/*
+    template< typename T >
+    struct basic_ga_pixel_traits
+        : basic_pixel_traits< T, color_type_ga >
     {
-        template< typename T >
-        struct common_traits
-        {
-            static color_type const color_space = color_type_ga;
-
-            static int const bit_depth = std::numeric_limits< T >::digits;
-            static T const alpha_filler()
-            {
-                return std::numeric_limits< T >::max();
-            }
-        };
-    }
+    };
+*/
 
     /**
      * \brief  Pixel traits specialization for ga_pixel.
      */
     template<>
     struct pixel_traits< ga_pixel >
-        : common_traits< byte >
+        : basic_pixel_traits< byte, color_type_ga >
     {
     };
 
     /**
-     * \brief  Pixel traits specialization for ga_pixel.
+     * \brief  Pixel traits specialization for ga_pixel_16.
      */
     template<>
     struct pixel_traits< ga_pixel_16 >
-        : common_traits< uint_16 >
+        : basic_pixel_traits< uint_16, color_type_ga >
     {
     };
 
