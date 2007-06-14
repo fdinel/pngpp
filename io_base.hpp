@@ -160,6 +160,13 @@ namespace png
 
         //////////////////////////////////////////////////////////////////////
 
+        bool has_chunk(chunk id)
+        {
+            return png_get_valid(m_png,
+                                 m_info.get_png_info(),
+                                 uint_32(id)) == uint_32(id);
+        }
+
 #if defined(PNG_READ_EXPAND_SUPPORTED)
         void set_gray_1_2_4_to_8() const
         {
@@ -170,7 +177,12 @@ namespace png
         {
             png_set_palette_to_rgb(m_png);
         }
-#endif
+
+        void set_tRNS_to_alpha() const
+        {
+            png_set_tRNS_to_alpha(m_png);
+        }
+#endif // defined(PNG_READ_EXPAND_SUPPORTED)
 
 #if defined(PNG_READ_BGR_SUPPORTED) || defined(PNG_WRITE_BGR_SUPPORTED)
         void set_bgr() const
