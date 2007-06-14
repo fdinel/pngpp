@@ -74,7 +74,8 @@ dist: test-clean
 	mkdir png++-$(version)
 	cp -r $(dist_files) png++-$(version)/
 	-rm png++-$(version).tar.gz
-	tar -zcf png++-$(version).tar.gz --exclude=.svn png++-$(version)/
+	tar -zcf png++-$(version).tar.gz --exclude=.svn --exclude='*~' \
+		png++-$(version)/
 	rm -rf png++-$(version)
 
 clean:
@@ -83,12 +84,10 @@ clean:
 thorough-clean: clean test-clean
 
 test: $(target_test)
-	for i in test/*.png; do \
-		./$(target_test) $$i $$i.out; \
-	done
+	make -C test PNGPPTEST=../$(target_test)
 
 test-clean:
-	rm -f test/*.out
+	make clean -C test
 
 .PHONY: all install dist clean thorough-clean test test-clean
 

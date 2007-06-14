@@ -34,20 +34,51 @@
 
 #include "png.hpp"
 
+void
+print_usage()
+{
+    std::cerr << "usage: pngpptest RGB|RGBA|GRAY|GA INFILE OUTFILE"
+              << std::endl;
+}
+
 int
 main(int argc, char* argv[])
 try
 {
-    if (argc != 3)
+    if (argc != 4)
     {
-        std::cerr << "usage: pngpptest INFILE OUTFILE" << std::endl;
+        print_usage();
         return EXIT_FAILURE;
     }
-    char const* infile = argv[1];
-    char const* outfile = argv[2];
+    char const* space = argv[1];
+    char const* infile = argv[2];
+    char const* outfile = argv[3];
 
-    png::image< png::rgba_pixel > image(infile);
-    image.write(outfile); //, png::convert_color_space< png::rgb_pixel >());
+    if (strcmp(space, "RGB") == 0)
+    {
+        png::image< png::rgb_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "RGBA") == 0)
+    {
+        png::image< png::rgba_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "GRAY") == 0)
+    {
+        png::image< png::gray_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "GA") == 0)
+    {
+        png::image< png::ga_pixel > image(infile);
+        image.write(outfile);
+    }
+    else
+    {
+        print_usage();
+        return EXIT_FAILURE;
+    }
 }
 catch (std::exception const& error)
 {
