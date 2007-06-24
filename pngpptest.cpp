@@ -71,6 +71,8 @@ try
     }
     else if (strcmp(space, "GA") == 0)
     {
+        png::ga_pixel ga(1); // test alpha_pixel_traits
+
         png::image< png::ga_pixel > image(infile);
         image.write(outfile);
     }

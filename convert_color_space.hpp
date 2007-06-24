@@ -164,13 +164,12 @@ namespace png
         {
             if ((io.get_color_type() & ~color_mask_alpha) == color_type_gray)
             {
-                if (io.get_bit_depth() < 8)
+                if (io.get_bit_depth() < 8 && traits::bit_depth >= 8)
                 {
 #ifdef PNG_READ_EXPAND_SUPPORTED
                     io.set_gray_1_2_4_to_8();
 #else
-                    throw error("convert_color_space: expected RGB data"
-                                " but found grayscale (< 8-bit) colors;"
+                    throw error("convert_color_space: expected 8-bit data;"
                                 " recompile with PNG_READ_EXPAND_SUPPORTED");
 #endif
                 }

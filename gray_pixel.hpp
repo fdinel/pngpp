@@ -37,19 +37,52 @@
 namespace png
 {
 
+    namespace
+    {
+        template< typename T, int bits > class allowed_bit_depth;
+
+        template<> class allowed_bit_depth< byte, 1 > {};
+        template<> class allowed_bit_depth< byte, 2 > {};
+        template<> class allowed_bit_depth< byte, 4 > {};
+        template<> class allowed_bit_depth< byte, 8 > {};
+//        template<> class allowed_bit_depth< uint_16, 16 > {};
+    }
+
+    template< typename T, int bits = sizeof(T) * 8 >
+    class basic_gray_pixel
+        : allowed_bit_depth< T, bits >
+    {
+    public:
+        explicit basic_gray_pixel(T val = 0)
+        {
+            *this = val;
+        }
+
+        basic_gray_pixel< T, bits >& operator=(T val)
+        {
+            value = val & bit_mask;
+            return *this;
+        }
+
+    private:
+//        static int const bit_depth = bits;
+        static T const bit_mask = (1 << bits) - 1;
+
+        T value;
+    };
+
     /**
      * \brief  Gray pixel type.
      */
-    typedef byte gray_pixel;
+    typedef basic_gray_pixel< byte > gray_pixel;
 
     /**
      * \brief  Pixel traits specialization for gray_pixel.
      */
-    template<>
-    struct pixel_traits< gray_pixel >
+    template< typename T, int bits >
+    struct pixel_traits< basic_gray_pixel< T, bits > >
+        : basic_pixel_traits< T, color_type_gray, bits >
     {
-        static color_type const color_space = color_type_gray;
-        static int const bit_depth = 8;
     };
 
 } // namespace png

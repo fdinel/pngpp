@@ -62,7 +62,7 @@ namespace png
          * to full opacity.
          */
         explicit basic_ga_pixel(T value,
-                                T alpha = traits::alpha_filler)
+                                T alpha = traits::get_alpha_filler())
             : value(value), alpha(alpha)
         {
         }
@@ -74,29 +74,13 @@ namespace png
     typedef basic_ga_pixel< byte > ga_pixel;
     typedef basic_ga_pixel< uint_16 > ga_pixel_16;
 
-/*
+    /**
+     * \brief  Pixel traits specialization for basic_ga_pixel.
+     */
     template< typename T >
-    struct basic_ga_pixel_traits
-        : basic_pixel_traits< T, color_type_ga >
-    {
-    };
-*/
-
-    /**
-     * \brief  Pixel traits specialization for ga_pixel.
-     */
-    template<>
-    struct pixel_traits< ga_pixel >
-        : basic_pixel_traits< byte, color_type_ga >
-    {
-    };
-
-    /**
-     * \brief  Pixel traits specialization for ga_pixel_16.
-     */
-    template<>
-    struct pixel_traits< ga_pixel_16 >
-        : basic_pixel_traits< uint_16, color_type_ga >
+    struct pixel_traits< basic_ga_pixel< T > >
+        : basic_pixel_traits< T, color_type_ga >,
+          basic_alpha_pixel_traits< T >
     {
     };
 

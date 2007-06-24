@@ -49,15 +49,20 @@ namespace png
     {
     };
 
-    template< typename T, color_type CT >
+    template< typename T, color_type CT,
+              int bits = std::numeric_limits< T >::digits >
     struct basic_pixel_traits
     {
         typedef T component_type;
 
         static color_type const color_space = CT;
-        static int const bit_depth = std::numeric_limits< T >::digits;
+        static int const bit_depth = bits;
+    };
 
-        static T alpha_filler()
+    template< typename T >
+    struct basic_alpha_pixel_traits
+    {
+        static T get_alpha_filler()
         {
             return std::numeric_limits< T >::max();
         }
