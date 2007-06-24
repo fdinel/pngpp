@@ -32,56 +32,44 @@
 #define PNGPP_GRAY_PIXEL_HPP_INCLUDED
 
 #include "types.hpp"
+#include "packed_pixel.hpp"
 #include "pixel_traits.hpp"
 
 namespace png
 {
 
-    namespace
-    {
-        template< typename T, int bits > class allowed_bit_depth;
+    typedef byte gray_pixel;
 
-        template<> class allowed_bit_depth< byte, 1 > {};
-        template<> class allowed_bit_depth< byte, 2 > {};
-        template<> class allowed_bit_depth< byte, 4 > {};
-        template<> class allowed_bit_depth< byte, 8 > {};
-//        template<> class allowed_bit_depth< uint_16, 16 > {};
-    }
-
-    template< typename T, int bits = sizeof(T) * 8 >
-    class basic_gray_pixel
-        : allowed_bit_depth< T, bits >
+    template< int bits >
+    class packed_gray_pixel
+        : public packed_pixel< bits >
     {
     public:
-        explicit basic_gray_pixel(T val = 0)
+        explicit packed_gray_pixel(byte val = 0)
+            : packed_pixel< bits >(val)
         {
-            *this = val;
         }
-
-        basic_gray_pixel< T, bits >& operator=(T val)
-        {
-            value = val & bit_mask;
-            return *this;
-        }
-
-    private:
-//        static int const bit_depth = bits;
-        static T const bit_mask = (1 << bits) - 1;
-
-        T value;
     };
 
-    /**
-     * \brief  Gray pixel type.
-     */
-    typedef basic_gray_pixel< byte > gray_pixel;
+    typedef packed_gray_pixel< 1 > gray_pixel_1;
+    typedef packed_gray_pixel< 2 > gray_pixel_2;
+    typedef packed_gray_pixel< 4 > gray_pixel_4;
 
     /**
      * \brief  Pixel traits specialization for gray_pixel.
      */
-    template< typename T, int bits >
-    struct pixel_traits< basic_gray_pixel< T, bits > >
-        : basic_pixel_traits< T, color_type_gray, bits >
+    template<>
+    struct pixel_traits< gray_pixel >
+        : basic_pixel_traits< byte, color_type_gray >
+    {
+    };
+
+    /**
+     * \brief  Pixel traits specialization for packed_gray_pixel.
+     */
+    template< int bits >
+    struct pixel_traits< packed_gray_pixel< bits > >
+        : basic_pixel_traits< byte, color_type_gray, bits >
     {
     };
 

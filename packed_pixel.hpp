@@ -28,62 +28,51 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <iostream>
-#include <ostream>
-#include <sstream>
+#ifndef PNGPP_PACKED_PIXEL_HPP_INCLUDED
+#define PNGPP_PACKED_PIXEL_HPP_INCLUDED
 
-#include "png.hpp"
+#include "types.hpp"
 
-void
-print_usage()
+namespace png
 {
-    std::cerr << "usage: pngpptest RGB|RGBA|GRAY|GA INFILE OUTFILE"
-              << std::endl;
-}
 
-int
-main(int argc, char* argv[])
-try
-{
-    if (argc != 4)
+    namespace
     {
-        print_usage();
-        return EXIT_FAILURE;
-    }
-    char const* space = argv[1];
-    char const* infile = argv[2];
-    char const* outfile = argv[3];
+        template< int bits > class allowed_bit_depth;
 
-    if (strcmp(space, "RGB") == 0)
-    {
-        png::image< png::rgb_pixel > image(infile);
-        image.write(outfile);
+        template<> class allowed_bit_depth< 1 > {};
+        template<> class allowed_bit_depth< 2 > {};
+        template<> class allowed_bit_depth< 4 > {};
     }
-    else if (strcmp(space, "RGBA") == 0)
-    {
-        png::image< png::rgba_pixel > image(infile);
-        image.write(outfile);
-    }
-    else if (strcmp(space, "GRAY") == 0)
-    {
-        png::image< png::gray_pixel > image(infile);
-        image.write(outfile);
-    }
-    else if (strcmp(space, "GA") == 0)
-    {
-        png::ga_pixel ga(1); // test alpha_pixel_traits
 
-        png::image< png::ga_pixel > image(infile);
-        image.write(outfile);
-    }
-    else
+    template< int bits >
+    class packed_pixel
+        : allowed_bit_depth< bits >
     {
-        print_usage();
-        return EXIT_FAILURE;
-    }
-}
-catch (std::exception const& error)
-{
-    std::cerr << "pngpptest: " << error.what() << std::endl;
-    return EXIT_FAILURE;
-}
+    public:
+        explicit packed_pixel(byte val = 0)
+        {
+            *this = val;
+        }
+
+        packed_pixel& operator=(byte val)
+        {
+            value = val & bit_mask;
+            return *this;
+        }
+
+        operator byte() const
+        {
+            return value;
+        }
+
+        static int const bit_depth = bits;
+        static byte const bit_mask = (1 << bits) - 1;
+
+    private:
+        byte value;
+    };
+
+} // namespace png
+
+#endif // PNGPP_PACKED_PIXEL_HPP_INCLUDED

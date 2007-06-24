@@ -116,9 +116,7 @@ namespace png
 
                 while (!pix.end())
                 {
-                    png_read_row(m_png,
-                                 reinterpret_cast< byte* >(& pix.next()[0]),
-                                 0);
+                    png_read_row(m_png, pix.next(), 0);
                 }
             }
         }

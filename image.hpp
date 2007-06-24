@@ -397,9 +397,11 @@ namespace png
             {
             }
 
-            row& next()
+            byte* next()
             {
-                return m_pixbuf.get_row(m_pos++);
+                typedef typename pixbuf::row_traits row_traits;
+                row& next_row = m_pixbuf.get_row(m_pos++);
+                return reinterpret_cast< byte* >(row_traits::get_data(next_row));
             }
 
             void reset(int /*pass*/)

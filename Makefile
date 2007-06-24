@@ -53,15 +53,16 @@ endif
 build_files := Makefile
 info_files := AUTHORS COPYING INSTALL README TODO
 header_files := *.hpp
-source_files := pngpptest.cpp
+source_files := test-convert.cpp
 test_files := test/
 dist_files := $(build_files) $(info_files) \
   $(header_files) $(source_files) \
   $(test_files)
 
 
-target_test := pngpptest$(bin_suffix)
-targets := $(target_test)
+target_test_convert := test-convert$(bin_suffix)
+target_test_gp := test-gp$(bin_suffix)
+targets := $(target_test_convert) $(target_test_gp)
 
 all: $(targets)
 
@@ -84,13 +85,17 @@ clean:
 thorough-clean: clean test-clean
 
 test: $(target_test)
-	make -C test PNGPPTEST=../$(target_test)
+	make -C test
 
 test-clean:
 	make clean -C test
 
 .PHONY: all install dist clean thorough-clean test test-clean
 
-$(target_test): pngpptest.cpp *.hpp Makefile
+$(target_test_convert): test-convert.cpp *.hpp Makefile
+	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
+	  `$(libpng_config) --cflags --ldflags --libs`
+
+$(target_test_gp): test-gp.cpp *.hpp Makefile
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`

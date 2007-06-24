@@ -120,8 +120,7 @@ namespace png
 
                 while (!pix.end())
                 {
-                    png_write_row(m_png,
-                                  reinterpret_cast< byte* >(& pix.next()[0]));
+                    png_write_row(m_png, pix.next());
                 }
             }
         }

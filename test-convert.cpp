@@ -28,27 +28,62 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PNGPP_PNG_HPP_INCLUDED
-#define PNGPP_PNG_HPP_INCLUDED
+#include <iostream>
+#include <ostream>
+#include <sstream>
 
-#include <png.h>
+#include "png.hpp"
 
-#include "types.hpp"
-#include "error.hpp"
-#include "packed_pixel.hpp"
-#include "rgb_pixel.hpp"
-#include "rgba_pixel.hpp"
-#include "gray_pixel.hpp"
-#include "ga_pixel.hpp"
-#include "info_base.hpp"
-#include "info.hpp"
-#include "end_info.hpp"
-#include "io_base.hpp"
-#include "reader.hpp"
-#include "writer.hpp"
-#include "pixel_buffer.hpp"
-#include "require_color_space.hpp"
-#include "convert_color_space.hpp"
-#include "image.hpp"
+void
+print_usage()
+{
+    std::cerr << "usage: test-convert RGB|RGBA|GRAY|GA INFILE OUTFILE"
+              << std::endl;
+}
 
-#endif // PNGPP_PNG_HPP_INCLUDED
+int
+main(int argc, char* argv[])
+try
+{
+    if (argc != 4)
+    {
+        print_usage();
+        return EXIT_FAILURE;
+    }
+    char const* space = argv[1];
+    char const* infile = argv[2];
+    char const* outfile = argv[3];
+
+    if (strcmp(space, "RGB") == 0)
+    {
+        png::image< png::rgb_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "RGBA") == 0)
+    {
+        png::image< png::rgba_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "GRAY") == 0)
+    {
+        png::image< png::gray_pixel > image(infile);
+        image.write(outfile);
+    }
+    else if (strcmp(space, "GA") == 0)
+    {
+        png::ga_pixel ga(1); // test alpha_pixel_traits
+
+        png::image< png::ga_pixel > image(infile);
+        image.write(outfile);
+    }
+    else
+    {
+        print_usage();
+        return EXIT_FAILURE;
+    }
+}
+catch (std::exception const& error)
+{
+    std::cerr << "test-convert: " << error.what() << std::endl;
+    return EXIT_FAILURE;
+}
