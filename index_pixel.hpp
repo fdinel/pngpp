@@ -28,52 +28,66 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PNGPP_GA_PIXEL_HPP_INCLUDED
-#define PNGPP_GA_PIXEL_HPP_INCLUDED
-
-#include <limits>
+#ifndef PNGPP_INDEX_PIXEL_HPP_INCLUDED
+#define PNGPP_INDEX_PIXEL_HPP_INCLUDED
 
 #include "types.hpp"
+#include "packed_pixel.hpp"
 #include "pixel_traits.hpp"
 
 namespace png
 {
 
-    /**
-     * \brief  Gray+Alpha pixel type.
-     */
-    template< typename T >
-    struct basic_ga_pixel
+    class index_pixel
     {
-        typedef pixel_traits< basic_ga_pixel< T > > traits;
-
-        /**
-         * \brief  Constructs basic_ga_pixel object from \a value and
-         * \a alpha components passed as parameters.  Alpha defaults
-         * to full opacity.
-         */
-        basic_ga_pixel(T value = 0, T alpha = traits::get_alpha_filler())
-            : value(value), alpha(alpha)
+    public:
+        index_pixel(byte index = 0)
+            : m_index(index)
         {
         }
 
-        T value;
-        T alpha;
+        operator byte() const
+        {
+            return m_index;
+        }
+
+    private:
+        byte m_index;
     };
 
-    typedef basic_ga_pixel< byte > ga_pixel;
-    typedef basic_ga_pixel< uint_16 > ga_pixel_16;
+    template< int bits >
+    class packed_index_pixel
+        : public packed_pixel< bits >
+    {
+    public:
+        packed_index_pixel(byte value = 0)
+            : packed_pixel< bits >(value)
+        {
+        }
+    };
+
+    typedef packed_index_pixel< 1 > index_pixel_1;
+    typedef packed_index_pixel< 2 > index_pixel_2;
+    typedef packed_index_pixel< 4 > index_pixel_4;
 
     /**
-     * \brief  Pixel traits specialization for basic_ga_pixel.
+     * \brief  Pixel traits specialization for index_pixel.
      */
-    template< typename T >
-    struct pixel_traits< basic_ga_pixel< T > >
-        : basic_pixel_traits< T, color_type_ga, 2 >,
-          basic_alpha_pixel_traits< T >
+    template<>
+    struct pixel_traits< index_pixel >
+        : basic_pixel_traits< byte, color_type_palette, 1 >
+    {
+    };
+
+    /**
+     * \brief  Pixel traits specialization for packed_index_pixel.
+     */
+    template< int bits >
+    struct pixel_traits< packed_index_pixel< bits > >
+        : basic_pixel_traits< byte, color_type_palette, 1, bits >
     {
     };
 
 } // namespace png
 
-#endif // PNGPP_GA_PIXEL_HPP_INCLUDED
+#endif // PNGPP_INDEX_PIXEL_HPP_INCLUDED

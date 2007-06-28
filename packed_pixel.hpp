@@ -50,27 +50,21 @@ namespace png
         : allowed_bit_depth< bits >
     {
     public:
-        explicit packed_pixel(byte val = 0)
+        packed_pixel(byte value = 0)
+            : m_value(value & bit_mask)
         {
-            *this = val;
-        }
-
-        packed_pixel& operator=(byte val)
-        {
-            value = val & bit_mask;
-            return *this;
         }
 
         operator byte() const
         {
-            return value;
+            return m_value;
         }
 
         static int const bit_depth = bits;
         static byte const bit_mask = (1 << bits) - 1;
 
     private:
-        byte value;
+        byte m_value;
     };
 
 } // namespace png

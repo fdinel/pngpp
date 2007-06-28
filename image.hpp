@@ -36,6 +36,7 @@
 #include "reader.hpp"
 #include "writer.hpp"
 #include "convert_color_space.hpp"
+#include "palette.hpp"
 
 namespace png
 {
@@ -47,7 +48,7 @@ namespace png
     class image
     {
     public:
-        typedef pixel_traits< pixel > pix_traits;
+        typedef pixel_traits< pixel > traits;
         typedef pixel_buffer< pixel > pixbuf;
 
         /**
@@ -221,6 +222,14 @@ namespace png
             m_compression_type = rd.get_compression_type();
             m_filter_type = rd.get_filter_type();
 
+            if (traits::color_space == color_type_palette)
+            {
+                if (rd.has_chunk(chunk_PLTE))
+                {
+                    rd.get_info().get_palette(m_palette);
+                }
+            }
+
             transform(rd);
             rd.update_info();
 
@@ -289,17 +298,24 @@ namespace png
             writer wr(stream);
             wr.set_width(m_pixbuf.get_width());
             wr.set_height(m_pixbuf.get_height());
-            wr.set_color_type(pix_traits::color_space);
-            wr.set_bit_depth(pix_traits::bit_depth);
+            wr.set_color_type(traits::color_space);
+            wr.set_bit_depth(traits::bit_depth);
             wr.set_interlace_type(m_interlace_type);
             wr.set_compression_type(m_compression_type);
             wr.set_filter_type(m_filter_type);
 
 //             transform(wr);
+
+            if (traits::color_space == color_type_palette
+                && wr.get_color_type() == color_type_palette)
+            {
+                wr.get_info().set_palette(m_palette);
+            }
+
             wr.write_info();
 //             transform(wr,
-//                       pix_traits::color_space,
-//                       pix_traits::bit_depth);
+//                       traits::color_space,
+//                       traits::bit_depth);
 
             io_adapter adapter(m_pixbuf);
             wr.write_pixels(adapter);
@@ -387,6 +403,21 @@ namespace png
             m_filter_type = filter;
         }
 
+        palette const& get_palette() const
+        {
+            return m_palette;
+        }
+
+        palette& get_palette()
+        {
+            return m_palette;
+        }
+
+        void set_palette(palette const& plte)
+        {
+            m_palette = plte;
+        }
+
     protected:
         class io_adapter
         {
@@ -423,6 +454,7 @@ namespace png
         interlace_type m_interlace_type;
         compression_type m_compression_type;
         filter_type m_filter_type;
+        palette m_palette;
     };
 
 } // namespace png

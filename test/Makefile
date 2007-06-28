@@ -1,4 +1,4 @@
-test: test-convert test-gp test-gp-rd
+test: test-convert test-gp test-gp-rd test-gen-palette
 
 test-convert:
 	for i in *.png; do \
@@ -11,7 +11,6 @@ test-convert:
 		done; \
 	done
 
-
 test-gp:
 	for i in 1 2 4; do \
 		out=gp$$i.png.out; \
@@ -23,6 +22,13 @@ test-gp-rd:
 		in=basn0g0$$i.png; \
 		out=$$in.out; \
 		../test-gp-rd $$i $$in $$out && cmp $$out cmp/$$out; \
+	done
+
+test-gen-palette:
+	../test-gen-palette
+	for i in 1 2 4 8; do \
+		out=palette$$i.png.out; \
+		cmp $$out cmp/$$out; \
 	done
 
 clean:

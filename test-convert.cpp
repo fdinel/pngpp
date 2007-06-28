@@ -30,7 +30,6 @@
  */
 #include <iostream>
 #include <ostream>
-#include <sstream>
 
 #include "png.hpp"
 

@@ -38,7 +38,8 @@ namespace png
     typedef png_uint_16 uint_16;
     typedef png_uint_32 uint_32;
     typedef png_fixed_point fixed_point;
-    typedef png_color_8 color;
+    typedef png_color_8 color_info;
+    typedef png_color_16 color_info_16;
 
     enum color_type
     {

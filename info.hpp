@@ -33,6 +33,7 @@
 
 #include <cassert>
 #include "info_base.hpp"
+#include "palette.hpp"
 
 namespace png
 {
@@ -159,6 +160,20 @@ namespace png
         void set_filter_type(filter_type filter)
         {
             m_filter_type = filter;
+        }
+
+        void get_palette(palette& plte) const
+        {
+            png_color* colors = 0;
+            int count = 0;
+            png_get_PLTE(m_png, m_info, & colors, & count);
+            plte.assign(colors, colors + count);
+        }
+
+        void set_palette(palette const& plte)
+        {
+            png_set_PLTE(m_png, m_info, const_cast< color* >(& plte[0]),
+                         plte.size());
         }
 
     protected:

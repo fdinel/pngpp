@@ -36,6 +36,8 @@
 #include <vector>
 
 #include "packed_pixel.hpp"
+#include "gray_pixel.hpp"
+#include "index_pixel.hpp"
 
 namespace png
 {
@@ -290,10 +292,31 @@ namespace png
     template< int bits >
     class pixel_buffer< packed_gray_pixel< bits > >
         : public basic_pixel_buffer< packed_gray_pixel< bits >,
-                                     packed_pixel_row< packed_gray_pixel< bits > > >
+                                     packed_pixel_row< packed_gray_pixel
+                                                       < bits > > >
     {
     public:
         typedef packed_gray_pixel< bits > pixel_type;
+        typedef packed_pixel_row< pixel_type > pixel_row_type;
+
+        pixel_buffer()
+        {
+        }
+
+        pixel_buffer(size_t width, size_t height)
+            : basic_pixel_buffer< pixel_type, pixel_row_type >(width, height)
+        {
+        }
+    };
+
+    template< int bits >
+    class pixel_buffer< packed_index_pixel< bits > >
+        : public basic_pixel_buffer< packed_index_pixel< bits >,
+                                     packed_pixel_row< packed_index_pixel
+                                                       < bits > > >
+    {
+    public:
+        typedef packed_index_pixel< bits > pixel_type;
         typedef packed_pixel_row< pixel_type > pixel_row_type;
 
         pixel_buffer()

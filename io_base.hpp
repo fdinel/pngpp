@@ -288,7 +288,7 @@ namespace png
             {
                 throw error("set_shift: expected RGB or RGBA color type");
             }
-            color bits;
+            color_info bits;
             bits.red = red_bits;
             bits.green = green_bits;
             bits.blue = blue_bits;
@@ -304,7 +304,7 @@ namespace png
                 throw error("set_shift: expected Gray or Gray+Alpha"
                             " color type");
             }
-            color bits;
+            color_info bits;
             bits.gray = gray_bits;
             bits.alpha = alpha_bits;
             png_set_shift(m_png, & bits);

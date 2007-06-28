@@ -46,8 +46,8 @@ namespace png
         : public packed_pixel< bits >
     {
     public:
-        explicit packed_gray_pixel(byte val = 0)
-            : packed_pixel< bits >(val)
+        packed_gray_pixel(byte value = 0)
+            : packed_pixel< bits >(value)
         {
         }
     };

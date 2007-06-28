@@ -28,52 +28,61 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PNGPP_GA_PIXEL_HPP_INCLUDED
-#define PNGPP_GA_PIXEL_HPP_INCLUDED
+#include <iostream>
+#include <ostream>
 
-#include <limits>
+#include "png.hpp"
 
-#include "types.hpp"
-#include "pixel_traits.hpp"
-
-namespace png
+template< typename pixel >
+void
+generate_image(png::image< pixel >& image, char const* filename)
 {
+    typedef png::pixel_traits< pixel > traits;
+    size_t colors = 1 << traits::bit_depth;
+    size_t size = colors / 2; 
+    image.resize(size, size);
 
-    /**
-     * \brief  Gray+Alpha pixel type.
-     */
-    template< typename T >
-    struct basic_ga_pixel
+    png::palette palette(colors);
+    for (size_t c = 0; c < colors; ++c)
     {
-        typedef pixel_traits< basic_ga_pixel< T > > traits;
-
-        /**
-         * \brief  Constructs basic_ga_pixel object from \a value and
-         * \a alpha components passed as parameters.  Alpha defaults
-         * to full opacity.
-         */
-        basic_ga_pixel(T value = 0, T alpha = traits::get_alpha_filler())
-            : value(value), alpha(alpha)
+        palette[c] = png::color(c * 255 / colors,
+                                (colors - c - 1) * 255 / colors,
+                                c * 255 / colors);
+    }
+    image.set_palette(palette);
+    for (size_t j = 0; j < image.get_height(); ++j)
+    {
+        for (size_t i = 0; i < image.get_width(); ++i)
         {
+            image.set_pixel(i, j, i + j);
         }
+    }
+    image.write(filename);
+}
 
-        T value;
-        T alpha;
-    };
-
-    typedef basic_ga_pixel< byte > ga_pixel;
-    typedef basic_ga_pixel< uint_16 > ga_pixel_16;
-
-    /**
-     * \brief  Pixel traits specialization for basic_ga_pixel.
-     */
-    template< typename T >
-    struct pixel_traits< basic_ga_pixel< T > >
-        : basic_pixel_traits< T, color_type_ga, 2 >,
-          basic_alpha_pixel_traits< T >
+int
+main()
+try
+{
     {
-    };
-
-} // namespace png
-
-#endif // PNGPP_GA_PIXEL_HPP_INCLUDED
+        png::image< png::index_pixel_1 > image;
+        generate_image(image, "palette1.png.out");
+    }
+    {
+        png::image< png::index_pixel_2 > image;
+        generate_image(image, "palette2.png.out");
+    }
+    {
+        png::image< png::index_pixel_4 > image;
+        generate_image(image, "palette4.png.out");
+    }
+    {
+        png::image< png::index_pixel > image;
+        generate_image(image, "palette8.png.out");
+    }
+}
+catch (std::exception const& error)
+{
+    std::cerr << "test-gen-palette: " << error.what() << std::endl;
+    return EXIT_FAILURE;
+}

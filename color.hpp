@@ -28,52 +28,32 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PNGPP_GA_PIXEL_HPP_INCLUDED
-#define PNGPP_GA_PIXEL_HPP_INCLUDED
-
-#include <limits>
+#ifndef PNGPP_COLOR_HPP_INCLUDED
+#define PNGPP_COLOR_HPP_INCLUDED
 
 #include "types.hpp"
-#include "pixel_traits.hpp"
 
 namespace png
 {
 
-    /**
-     * \brief  Gray+Alpha pixel type.
-     */
-    template< typename T >
-    struct basic_ga_pixel
+    struct color
+        : png_color
     {
-        typedef pixel_traits< basic_ga_pixel< T > > traits;
-
-        /**
-         * \brief  Constructs basic_ga_pixel object from \a value and
-         * \a alpha components passed as parameters.  Alpha defaults
-         * to full opacity.
-         */
-        basic_ga_pixel(T value = 0, T alpha = traits::get_alpha_filler())
-            : value(value), alpha(alpha)
+        explicit color(byte r = 0, byte g = 0, byte b = 0)
         {
+            this->red = r;
+            this->green = g;
+            this->blue = b;
         }
 
-        T value;
-        T alpha;
-    };
-
-    typedef basic_ga_pixel< byte > ga_pixel;
-    typedef basic_ga_pixel< uint_16 > ga_pixel_16;
-
-    /**
-     * \brief  Pixel traits specialization for basic_ga_pixel.
-     */
-    template< typename T >
-    struct pixel_traits< basic_ga_pixel< T > >
-        : basic_pixel_traits< T, color_type_ga, 2 >,
-          basic_alpha_pixel_traits< T >
-    {
+        color(png_color const& other)
+        {
+            this->red = other.red;
+            this->green = other.green;
+            this->blue = other.blue;
+        }
     };
 
 } // namespace png
 
-#endif // PNGPP_GA_PIXEL_HPP_INCLUDED
+#endif // PNGPP_COLOR_HPP_INCLUDED

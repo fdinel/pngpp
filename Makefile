@@ -63,7 +63,9 @@ dist_files := $(build_files) $(info_files) \
 target_test_convert := test-convert$(bin_suffix)
 target_test_gp := test-gp$(bin_suffix)
 target_test_gp_rd := test-gp-rd$(bin_suffix)
-targets := $(target_test_convert) $(target_test_gp) $(target_test_gp_rd)
+target_test_gen_palette := test-gen-palette(bin_suffix)
+targets := $(target_test_convert) $(target_test_gp) $(target_test_gp_rd) \
+  $(target_test_gen_palette)
 
 all: $(targets)
 
@@ -102,5 +104,9 @@ $(target_test_gp): test-gp.cpp *.hpp
 	  `$(libpng_config) --cflags --ldflags --libs`
 
 $(target_test_gp_rd): test-gp-rd.cpp *.hpp
+	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
+	  `$(libpng_config) --cflags --ldflags --libs`
+
+$(target_test_gen_palette): test-gen-palette.cpp *.hpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`
