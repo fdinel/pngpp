@@ -168,6 +168,11 @@ namespace png
     class packed_pixel_row
     {
     public:
+        explicit packed_pixel_row(size_t size = 0)
+        {
+            resize(size);
+        }
+
         size_t size() const
         {
             return m_size;
