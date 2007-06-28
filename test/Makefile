@@ -5,12 +5,12 @@ test-convert:
 		for j in RGB RGBA GRAY GA; do \
 			for k in 8 16; do \
 				out=$$i.$$j.$$k.out; \
-				../test-convert $$j $$k $$i $$out; \
+				../test-convert $$j $$k $$i $$out \
+				&& cmp $$out cmp/$$out; \
 			done; \
 		done; \
 	done
 
-#				&& cmp $$out cmp/$$out; \
 
 test-gp:
 	for i in 1 2 4; do \
