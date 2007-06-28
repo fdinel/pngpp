@@ -1,4 +1,4 @@
-test: test-convert test-gp
+test: test-convert test-gp test-gp-rd
 
 test-convert:
 	for i in *.png; do \
@@ -12,6 +12,13 @@ test-gp:
 	for i in 1 2 4; do \
 		out=gp$$i.png.out; \
 		../test-gp $$i $$out && cmp $$out cmp/$$out; \
+	done
+
+test-gp-rd:
+	for i in 1 2 4; do \
+		in=basn0g0$$i.png; \
+		out=$$in.out; \
+		../test-gp-rd $$i $$in $$out && cmp $$out cmp/$$out; \
 	done
 
 clean:

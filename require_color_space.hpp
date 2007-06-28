@@ -57,6 +57,15 @@ namespace png
         template<> char const* wrong_color_space< gray_pixel >::error_msg =
             "Grayscale color space required";
 
+        template<> char const* wrong_color_space< gray_pixel_1 >::error_msg =
+            "1-bit Grayscale color space required";
+
+        template<> char const* wrong_color_space< gray_pixel_2 >::error_msg =
+            "2-bit Grayscale color space required";
+
+        template<> char const* wrong_color_space< gray_pixel_4 >::error_msg =
+            "4-bit Grayscale color space required";
+
         template<> char const* wrong_color_space< ga_pixel >::error_msg =
             "Gray+Alpha color space required";
 

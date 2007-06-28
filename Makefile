@@ -62,7 +62,8 @@ dist_files := $(build_files) $(info_files) \
 
 target_test_convert := test-convert$(bin_suffix)
 target_test_gp := test-gp$(bin_suffix)
-targets := $(target_test_convert) $(target_test_gp)
+target_test_gp_rd := test-gp-rd$(bin_suffix)
+targets := $(target_test_convert) $(target_test_gp) $(target_test_gp_rd)
 
 all: $(targets)
 
@@ -92,10 +93,14 @@ test-clean:
 
 .PHONY: all install dist clean thorough-clean test test-clean
 
-$(target_test_convert): test-convert.cpp *.hpp Makefile
+$(target_test_convert): test-convert.cpp *.hpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`
 
-$(target_test_gp): test-gp.cpp *.hpp Makefile
+$(target_test_gp): test-gp.cpp *.hpp
+	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
+	  `$(libpng_config) --cflags --ldflags --libs`
+
+$(target_test_gp_rd): test-gp-rd.cpp *.hpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`
