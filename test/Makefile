@@ -3,10 +3,14 @@ test: test-convert test-gp test-gp-rd
 test-convert:
 	for i in *.png; do \
 		for j in RGB RGBA GRAY GA; do \
-			out=$$i.$$j.out; \
-			../test-convert $$j $$i $$out && cmp $$out cmp/$$out; \
+			for k in 8 16; do \
+				out=$$i.$$j.$$k.out; \
+				../test-convert $$j $$k $$i $$out; \
+			done; \
 		done; \
 	done
+
+#				&& cmp $$out cmp/$$out; \
 
 test-gp:
 	for i in 1 2 4; do \

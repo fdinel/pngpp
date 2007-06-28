@@ -40,13 +40,16 @@ namespace png
     /**
      * \brief  RGBA pixel type.
      */
-    struct rgba_pixel
+    template< typename T >
+    struct basic_rgba_pixel
     {
+        typedef pixel_traits< basic_rgba_pixel< T > > traits;
+
         /**
          * \brief  Default constructor.  Initializes all components
          * with zeros.
          */
-        rgba_pixel()
+        basic_rgba_pixel()
             : red(0), green(0), blue(0), alpha(0)
         {
         }
@@ -56,25 +59,29 @@ namespace png
          * \a blue and \a alpha components passed as parameters.
          * Alpha defaults to full opacity.
          */
-        rgba_pixel(byte red, byte green, byte blue, byte alpha = 0xff)
+        basic_rgba_pixel(T red, T green, T blue,
+                         T alpha = traits::get_alpha_filler())
             : red(red), green(green), blue(blue), alpha(alpha)
         {
         }
 
-        byte red;
-        byte green;
-        byte blue;
-        byte alpha;
+        T red;
+        T green;
+        T blue;
+        T alpha;
     };
 
+    typedef basic_rgba_pixel< byte > rgba_pixel;
+    typedef basic_rgba_pixel< uint_16 > rgba_pixel_16;
+
     /**
-     * \brief  Pixel traits specialization for rgba_pixel.
+     * \brief  Pixel traits specialization for basic_rgba_pixel.
      */
-    template<>
-    struct pixel_traits< rgba_pixel >
+    template< typename T >
+    struct pixel_traits< basic_rgba_pixel< T > >
+        : basic_pixel_traits< T, color_type_rgba, 4 >,
+          basic_alpha_pixel_traits< T >
     {
-        static color_type const color_space = color_type_rgba;
-        static int const bit_depth = 8;
     };
 
 } // namespace png

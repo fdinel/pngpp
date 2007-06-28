@@ -40,13 +40,14 @@ namespace png
     /**
      * \brief  RGB pixel type.
      */
-    struct rgb_pixel
+    template< typename T >
+    struct basic_rgb_pixel
     {
         /**
          * \brief  Default constructor.  Initializes all components
          * with zeros.
          */
-        rgb_pixel()
+        basic_rgb_pixel()
             : red(0), green(0), blue(0)
         {
         }
@@ -55,24 +56,26 @@ namespace png
          * \brief  Constructs rgb_pixel object from \a red, \a green
          * and \a blue components passed as parameters.
          */
-        rgb_pixel(byte red, byte green, byte blue)
+        basic_rgb_pixel(T red, T green, T blue)
             : red(red), green(green), blue(blue)
         {
         }
 
-        byte red;
-        byte green;
-        byte blue;
+        T red;
+        T green;
+        T blue;
     };
 
+    typedef basic_rgb_pixel< byte > rgb_pixel;
+    typedef basic_rgb_pixel< uint_16 > rgb_pixel_16;
+
     /**
-     * \brief  Pixel traits specialization for rgb_pixel.
+     * \brief  Pixel traits specialization for basic_rgb_pixel.
      */
-    template<>
-    struct pixel_traits< rgb_pixel >
+    template< typename T >
+    struct pixel_traits< basic_rgb_pixel< T > >
+        : basic_pixel_traits< T, color_type_rgb, 3 >
     {
-        static color_type const color_space = color_type_rgb;
-        static int const bit_depth = 8;
     };
 
 } // namespace png

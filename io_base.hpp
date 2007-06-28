@@ -333,6 +333,21 @@ namespace png
         }
 #endif
 
+#if defined(PNG_READ_USER_TRANSFORM_SUPPORTED)
+        void set_read_user_transform(png_user_transform_ptr transform_fn)
+        {
+            png_set_read_user_transform_fn(m_png, transform_fn);
+        }
+#endif
+
+#if defined(PNG_READ_USER_TRANSFORM_SUPPORTED) \
+    || defined(PNG_WRITE_USER_TRANSFORM_SUPPORTED)
+        void set_user_transform_info(void* info, int bit_depth, int channels)
+        {
+            png_set_user_transform_info(m_png, info, bit_depth, channels);
+        }
+#endif
+
     protected:
         void* get_io_ptr() const
         {

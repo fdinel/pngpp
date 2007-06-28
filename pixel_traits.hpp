@@ -49,13 +49,16 @@ namespace png
     {
     };
 
-    template< typename T, color_type CT,
+    template< typename T,
+              color_type col_type,
+              size_t chan_count,
               int bits = std::numeric_limits< T >::digits >
     struct basic_pixel_traits
     {
         typedef T component_type;
 
-        static color_type const color_space = CT;
+        static color_type const color_space = col_type;
+        static size_t const channels = chan_count;
         static int const bit_depth = bits;
     };
 

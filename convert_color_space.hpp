@@ -75,16 +75,50 @@ namespace png
         void operator()(writer& io) const;
 
     protected:
+        static void expand_8_to_16(png_struct*, png_row_info* row_info,
+                                   byte* row)
+        {
+//            dump_row(row, row_info->rowbytes);
+
+            uint_16* out = reinterpret_cast< uint_16* >(row);
+            for (size_t i = row_info->rowbytes; i-- > 0; )
+            {
+                out[i] = row[i]; // << 8;
+            }
+
+//            dump_row(row, row_info->rowbytes);
+        }
+
+        static void dump_row(byte const* row, size_t width)
+        {
+            printf("{");
+            for (size_t i = 0; i < width; ++i)
+            {
+                printf(" %02x,", row[i]);
+            }
+            printf(" }\n");
+        }
+
         static void handle_16(reader& io)
         {
-            if (io.get_bit_depth() == 16
-                && traits::bit_depth == 8) // TODO: 1, 2, 4?
+            if (io.get_bit_depth() == 16 && traits::bit_depth == 8)
             {
 #ifdef PNG_READ_16_TO_8_SUPPORTED
                 io.set_strip_16();
 #else
                 throw error("expected 8-bit data but found 16-bit;"
                             " recompile with PNG_READ_16_TO_8_SUPPORTED");
+#endif
+            }
+            if (io.get_bit_depth() != 16 && traits::bit_depth == 16)
+            {
+#ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
+                io.set_read_user_transform(expand_8_to_16);
+                io.set_user_transform_info(NULL, 16, traits::channels);
+#else
+                throw error("expected 16-bit data but found 8-bit;"
+                            " recompile with"
+                            " PNG_READ_USER_TRANSFORM_SUPPORTED");
 #endif
             }
         }
