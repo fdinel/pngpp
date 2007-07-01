@@ -365,14 +365,37 @@ namespace png
         }
 
     protected:
+        template< typename base >
+        class streaming_impl
+            : public base
+        {
+        public:
+            streaming_impl(image_info& info, pixbuf& pixels)
+                : base(info),
+                  m_pixbuf(pixels)
+            {
+            }
+
+            byte* get_next_row(size_t pos)
+            {
+                typedef typename pixbuf::row_traits row_traits;
+                return reinterpret_cast< byte* >
+                    (row_traits::get_data(m_pixbuf.get_row(pos)));
+            }
+
+        protected:
+            pixbuf& m_pixbuf;
+        };
+
         class pixel_consumer
-            : public consumer< pixel, pixel_consumer, image_info_ref_holder >
+            : public streaming_impl< consumer< pixel, pixel_consumer,
+                                               image_info_ref_holder > >
         {
         public:
             pixel_consumer(image_info& info, pixbuf& pixels)
-                : consumer< pixel, pixel_consumer,
-                            image_info_ref_holder >(info),
-                  m_pixbuf(pixels)
+                : streaming_impl< consumer< pixel, pixel_consumer,
+                                            image_info_ref_holder > >(info,
+                                                                      pixels)
             {
             }
 
@@ -380,42 +403,23 @@ namespace png
             {
                 if (pass == 0)
                 {
-                    m_pixbuf.resize(this->get_info().get_width(),
-                                    this->get_info().get_height());
+                    this->m_pixbuf.resize(this->get_info().get_width(),
+                                          this->get_info().get_height());
                 }
             }
-
-            byte* get_next_row(size_t pos)
-            {
-                typedef typename pixbuf::row_traits row_traits;
-                return reinterpret_cast< byte* >
-                    (row_traits::get_data(m_pixbuf.get_row(pos)));
-            }
-
-        private:
-            pixbuf& m_pixbuf;
         };
 
         class pixel_generator
-            : public generator< pixel, pixel_generator, image_info_ref_holder >
+            : public streaming_impl< generator< pixel, pixel_generator,
+                                                image_info_ref_holder > >
         {
         public:
             pixel_generator(image_info& info, pixbuf& pixels)
-                : generator< pixel, pixel_generator,
-                             image_info_ref_holder >(info),
-                  m_pixbuf(pixels)
+                : streaming_impl< generator< pixel, pixel_generator,
+                                             image_info_ref_holder > >(info,
+                                                                       pixels)
             {
             }
-
-            byte* get_next_row(size_t pos)
-            {
-                typedef typename pixbuf::row_traits row_traits;
-                return reinterpret_cast< byte* >
-                    (row_traits::get_data(m_pixbuf.get_row(pos)));
-            }
-
-        private:
-            pixbuf& m_pixbuf;
         };
 
         image_info m_info;

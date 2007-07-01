@@ -32,8 +32,7 @@
 #define PNGPP_CONSUMER_HPP_INCLUDED
 
 #include <cassert>
-#include "image_info.hpp"
-#include "pixel_traits.hpp"
+#include "streaming_base.hpp"
 #include "reader.hpp"
 
 namespace png
@@ -42,6 +41,7 @@ namespace png
     template< typename pixel, class pixcon,
               class info_holder = def_image_info_holder >
     class consumer
+        : public streaming_base< pixel, info_holder >
     {
     public:
         typedef pixel_traits< pixel > traits;
@@ -77,7 +77,7 @@ namespace png
                                        " in png::consumer::read()");
             }
 
-            get_info() = rd.get_image_info();
+            this->get_info() = rd.get_image_info();
 
             pixcon* pixel_con = static_cast< pixcon* >(this);
             assert(pixel_con); // TODO: can this be caught at
@@ -86,7 +86,7 @@ namespace png
             {
                 pixel_con->reset(pass);
 
-                for (size_t pos = 0; pos < get_info().get_height(); ++pos)
+                for (size_t pos = 0; pos < this->get_info().get_height(); ++pos)
                 {
                     rd.read_row(pixel_con->get_next_row(pos));
                 }
@@ -95,35 +95,18 @@ namespace png
             rd.read_end_info();
         }
 
-        image_info const& get_info() const
-        {
-            return m_info_holder.get_info();
-        }
-
     protected:
+        typedef streaming_base< pixel, info_holder > base;
+
         explicit consumer(image_info& info)
-            : m_info_holder(info)
+            : base(info)
         {
         }
 
         consumer(size_t width, size_t height)
-            : m_info_holder(make_image_info< pixel >())
+            : base(width, height)
         {
-            get_info().set_width(width);
-            get_info().set_height(height);
         }
-
-        void reset(size_t /*pass*/)
-        {
-            // nothing to do in the most general case
-        }
-
-        image_info& get_info()
-        {
-            return m_info_holder.get_info();
-        }
-
-        info_holder m_info_holder;
     };
 
 } // namespace png
