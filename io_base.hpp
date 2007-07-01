@@ -133,12 +133,12 @@ namespace png
             m_info.set_color_type(color_space);
         }
 
-        int get_bit_depth() const
+        size_t get_bit_depth() const
         {
             return m_info.get_bit_depth();
         }
 
-        void set_bit_depth(int bit_depth)
+        void set_bit_depth(size_t bit_depth)
         {
             m_info.set_bit_depth(bit_depth);
         }

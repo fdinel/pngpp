@@ -61,7 +61,7 @@ namespace png
                          m_info,
                          & m_width,
                          & m_height,
-                         & m_bit_depth,
+                         reinterpret_cast< int* >(& m_bit_depth),
                          reinterpret_cast< int* >(& m_color_type),
                          reinterpret_cast< int* >(& m_interlace_type),
                          reinterpret_cast< int* >(& m_compression_type),

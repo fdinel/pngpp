@@ -38,14 +38,14 @@ namespace png
 
     namespace
     {
-        template< int bits > class allowed_bit_depth;
+        template< size_t bits > class allowed_bit_depth;
 
         template<> class allowed_bit_depth< 1 > {};
         template<> class allowed_bit_depth< 2 > {};
         template<> class allowed_bit_depth< 4 > {};
     }
 
-    template< int bits >
+    template< size_t bits >
     class packed_pixel
         : allowed_bit_depth< bits >
     {
@@ -60,7 +60,7 @@ namespace png
             return m_value;
         }
 
-        static int const bit_depth = bits;
+        static size_t const bit_depth = bits;
         static byte const bit_mask = (1 << bits) - 1;
 
     private:

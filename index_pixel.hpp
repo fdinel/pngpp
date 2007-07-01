@@ -55,7 +55,7 @@ namespace png
         byte m_index;
     };
 
-    template< int bits >
+    template< size_t bits >
     class packed_index_pixel
         : public packed_pixel< bits >
     {
@@ -82,7 +82,7 @@ namespace png
     /**
      * \brief  Pixel traits specialization for packed_index_pixel.
      */
-    template< int bits >
+    template< size_t bits >
     struct pixel_traits< packed_index_pixel< bits > >
         : basic_pixel_traits< packed_index_pixel< bits >, byte,
                               color_type_palette, /* channels = */ 1, bits >

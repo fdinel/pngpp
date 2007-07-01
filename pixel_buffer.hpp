@@ -323,7 +323,7 @@ namespace png
         }
     };
 
-    template< int bits >
+    template< size_t bits >
     class pixel_buffer< packed_gray_pixel< bits > >
         : public basic_pixel_buffer< packed_gray_pixel< bits >,
                                      packed_pixel_row< packed_gray_pixel
@@ -343,7 +343,7 @@ namespace png
         }
     };
 
-    template< int bits >
+    template< size_t bits >
     class pixel_buffer< packed_index_pixel< bits > >
         : public basic_pixel_buffer< packed_index_pixel< bits >,
                                      packed_pixel_row< packed_index_pixel

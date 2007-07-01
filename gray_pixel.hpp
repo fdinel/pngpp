@@ -41,7 +41,7 @@ namespace png
     typedef byte gray_pixel;
     typedef uint_16 gray_pixel_16;
 
-    template< int bits >
+    template< size_t bits >
     class packed_gray_pixel
         : public packed_pixel< bits >
     {
@@ -77,7 +77,7 @@ namespace png
     /**
      * \brief  Pixel traits specialization for packed_gray_pixel.
      */
-    template< int bits >
+    template< size_t bits >
     struct pixel_traits< packed_gray_pixel< bits > >
         : basic_pixel_traits< packed_gray_pixel< bits >, byte,
                               color_type_gray, /* channels = */ 1, bits >

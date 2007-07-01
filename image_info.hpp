@@ -81,12 +81,12 @@ namespace png
             m_color_type = color_space;
         }
 
-        int get_bit_depth() const
+        size_t get_bit_depth() const
         {
             return m_bit_depth;
         }
 
-        void set_bit_depth(int bit_depth)
+        void set_bit_depth(size_t bit_depth)
         {
             m_bit_depth = bit_depth;
         }
@@ -144,7 +144,7 @@ namespace png
     protected:
         uint_32 m_width;
         uint_32 m_height;
-        int m_bit_depth;
+        size_t m_bit_depth;
         color_type m_color_type;
         interlace_type m_interlace_type;
         compression_type m_compression_type;

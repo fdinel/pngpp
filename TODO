@@ -4,7 +4,8 @@
 + adjust png::image for non-memory back end buffer + row-by-row io
 + use doxygen
 - add optional and unknown chunks handling
-- change bit_depth to size_t
++ change bit_depth to size_t
 - move tests sources to test/, examples to examples/
 + extract common code from generator/consumer
 + update pixel traits to detect channels count
+- unify template parameters naming
