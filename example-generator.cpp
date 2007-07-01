@@ -16,30 +16,20 @@ public:
     {
         for (size_t i = 0; i <  m_row.size(); ++i)
         {
-            m_row[i] = std::rand();
+            m_row[i] = i > m_row.size() / 2;
         }
     }
 
     png::byte* next()
     {
         ++m_pos;
-        row next_row(m_row.size());
-        for (size_t i = 0; i <  m_row.size(); ++i)
-        {
-            next_row[i] = left(i) && right(i) ? 0 : 1;
-        }
-        m_row = next_row;
+
+        size_t i = std::rand() % m_row.size();
+        size_t j = std::rand() % m_row.size();
+        png::gray_pixel_1 t = m_row[i];
+        m_row[i] = m_row[j];
+        m_row[j] = t;
         return reinterpret_cast< png::byte* >(row_traits::get_data(m_row));
-    }
-
-    png::gray_pixel_1 left(size_t i)
-	{
-        return i > 0 ? m_row[i - 1] : m_row[m_row.size() - 1];
-    }
-
-    png::gray_pixel_1 right(size_t i)
-	{
-        return i < m_row.size() - 1 ? m_row[i + 1] : m_row[0];
     }
 
     void reset(int /*pass*/)
@@ -65,8 +55,8 @@ int
 main()
 try
 {
-    size_t const width = 128;
-    size_t const height = 128;
+    size_t const width = 32;
+    size_t const height = 1024;
 
     std::ofstream file("output.png", std::ios::binary);
 
