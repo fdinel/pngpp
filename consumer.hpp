@@ -28,37 +28,39 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef PNGPP_GENERATOR_HPP_INCLUDED
-#define PNGPP_GENERATOR_HPP_INCLUDED
+#ifndef PNGPP_CONSUMER_HPP_INCLUDED
+#define PNGPP_CONSUMER_HPP_INCLUDED
 
 #include <cassert>
 #include "image_info.hpp"
 #include "pixel_traits.hpp"
-#include "writer.hpp"
+#include "reader.hpp"
 
 namespace png
 {
 
-    template< typename pixel, class pixgen,
+    template< typename pixel, class pixcon,
               class info_holder = def_image_info_holder >
-    class generator
+    class consumer
     {
     public:
         typedef pixel_traits< pixel > traits;
 
-        void write(std::ostream& stream)
+        template< class transformation >
+        void read(std::istream& stream, transformation const& transform)
         {
-            writer wr(stream);
-            wr.set_image_info(get_info());
-            wr.write_info();
+            reader rd(stream);
+            rd.read_info();
+            transform(rd);
 
+            // interlace handling _must_ be set up prior to info update
             size_t pass_count;
-            if (get_info().get_interlace_type() != interlace_none)
+            if (rd.get_interlace_type() != interlace_none)
             {
-#ifdef PNG_WRITE_INTERLACING_SUPPORTED
-                pass_count = wr.set_interlace_handling();
+#ifdef PNG_READ_INTERLACING_SUPPORTED
+                pass_count = rd.set_interlace_handling();
 #else
-                throw error("Cannot write interlaced image"
+                throw error("Cannot read interlaced image"
                             " -- interlace handling disabled.");
 #endif
             }
@@ -66,20 +68,31 @@ namespace png
             {
                 pass_count = 1;
             }
-            pixgen* pixel_gen = static_cast< pixgen* >(this);
-            assert(pixel_gen); // TODO: can this be caught at
+
+            rd.update_info();
+            if (rd.get_color_type() != traits::color_space
+                || rd.get_bit_depth() != traits::bit_depth)
+            {
+                throw std::logic_error("color type and/or bit depth mismatch"
+                                       " in png::consumer::read()");
+            }
+
+            get_info() = rd.get_image_info();
+
+            pixcon* pixel_con = static_cast< pixcon* >(this);
+            assert(pixel_con); // TODO: can this be caught at
                                // comple/link time?
             for (size_t pass = 0; pass < pass_count; ++pass)
             {
-                pixel_gen->reset(pass);
+                pixel_con->reset(pass);
 
                 for (size_t pos = 0; pos < get_info().get_height(); ++pos)
                 {
-                    wr.write_row(pixel_gen->get_next_row(pos));
+                    rd.read_row(pixel_con->get_next_row(pos));
                 }
             }
 
-            wr.write_end_info();
+            rd.read_end_info();
         }
 
         image_info const& get_info() const
@@ -88,12 +101,12 @@ namespace png
         }
 
     protected:
-        explicit generator(image_info& info)
+        explicit consumer(image_info& info)
             : m_info_holder(info)
         {
         }
 
-        generator(size_t width, size_t height)
+        consumer(size_t width, size_t height)
             : m_info_holder(make_image_info< pixel >())
         {
             get_info().set_width(width);
@@ -115,4 +128,4 @@ namespace png
 
 } // namespace png
 
-#endif // PNGPP_GENERATOR_HPP_INCLUDED
+#endif // PNGPP_CONSUMER_HPP_INCLUDED

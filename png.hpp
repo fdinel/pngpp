@@ -50,6 +50,7 @@
 #include "reader.hpp"
 #include "writer.hpp"
 #include "generator.hpp"
+#include "consumer.hpp"
 #include "pixel_buffer.hpp"
 #include "require_color_space.hpp"
 #include "convert_color_space.hpp"

@@ -96,29 +96,13 @@ namespace png
             m_info.read();
         }
 
-        /**
-         * \brief  Reads the whole PNG image data into a pixel buffer.
-         */
-        template< typename pixels >
-        void read_pixels(pixels& pix)
+        void read_row(byte* bytes)
         {
-            if (!m_pass_count)
-            {
-                setup_pass_count();
-            }
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
-            for (size_t pass = 0; pass < m_pass_count; ++pass)
-            {
-                pix.reset(pass);
-
-                while (!pix.end())
-                {
-                    png_read_row(m_png, pix.next(), 0);
-                }
-            }
+            png_read_row(m_png, bytes, 0);
         }
 
         /**
@@ -135,11 +119,6 @@ namespace png
 
         void update_info()
         {
-            // interlace handling _must_ be set up prior to info update
-            if (!m_pass_count)
-            {
-                setup_pass_count();
-            }
             m_info.update();
         }
 
@@ -148,19 +127,6 @@ namespace png
 
         void setup_pass_count()
         {
-            if (get_interlace_type() != interlace_none)
-            {
-#ifdef PNG_READ_INTERLACING_SUPPORTED
-                m_pass_count = set_interlace_handling();
-#else
-                throw error("Cannot read interlaced image"
-                            " -- interlace handling disabled.");
-#endif
-            }
-            else
-            {
-                m_pass_count = 1;
-            }
         }
 
     private:
