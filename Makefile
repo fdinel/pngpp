@@ -88,13 +88,15 @@ clean:
 
 thorough-clean: clean test-clean
 
+check: test
+
 test: $(target_test)
 	make -C test
 
 test-clean:
 	make clean -C test
 
-.PHONY: all install dist clean thorough-clean test test-clean
+.PHONY: all install dist clean thorough-clean check test test-clean
 
 $(target_test_convert): test-convert.cpp *.hpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
