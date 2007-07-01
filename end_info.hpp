@@ -45,8 +45,8 @@ namespace png
         : public info_base
     {
     public:
-        explicit end_info(png_struct* png)
-            : info_base(png)
+        end_info(io_base& io, png_struct* png)
+            : info_base(io, png)
         {
         }
 

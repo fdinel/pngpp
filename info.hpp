@@ -33,7 +33,7 @@
 
 #include <cassert>
 #include "info_base.hpp"
-#include "palette.hpp"
+#include "image_info.hpp"
 
 namespace png
 {
@@ -42,18 +42,12 @@ namespace png
      * \brief  Holds information about PNG image.
      */
     class info
-        : public info_base
+        : public info_base,
+          public image_info
     {
     public:
-        explicit info(png_struct* png)
-            : info_base(png),
-              m_width(0),
-              m_height(0),
-              m_bit_depth(0),
-              m_color_type(color_type_none),
-              m_interlace_type(interlace_none),
-              m_compression_type(compression_type_default),
-              m_filter_type(filter_type_default)
+        info(io_base& io, png_struct* png)
+            : info_base(io, png)
         {
         }
 
@@ -72,6 +66,14 @@ namespace png
                          reinterpret_cast< int* >(& m_interlace_type),
                          reinterpret_cast< int* >(& m_compression_type),
                          reinterpret_cast< int* >(& m_filter_type));
+
+            if (png_get_valid(m_png, m_info, chunk_PLTE) == chunk_PLTE)
+            {
+                png_color* colors = 0;
+                int count = 0;
+                png_get_PLTE(m_png, m_info, & colors, & count);
+                m_palette.assign(colors, colors + count);
+            }
         }
 
         void write() const
@@ -80,6 +82,12 @@ namespace png
             assert(m_info);
 
             sync_ihdr();
+            if (! m_palette.empty())
+            {
+                png_set_PLTE(m_png, m_info,
+                             const_cast< color* >(& m_palette[0]),
+                             m_palette.size());
+            }
             png_write_info(m_png, m_info);
         }
 
@@ -90,90 +98,6 @@ namespace png
 
             sync_ihdr();
             png_read_update_info(m_png, m_info);
-        }
-
-        size_t get_width() const
-        {
-            return m_width;
-        }
-
-        void set_width(size_t width)
-        {
-            m_width = width;
-        }
-
-        size_t get_height() const
-        {
-            return m_height;
-        }
-
-        void set_height(size_t height)
-        {
-            m_height = height;
-        }
-
-        color_type get_color_type() const
-        {
-            return m_color_type;
-        }
-
-        void set_color_type(color_type color_space)
-        {
-            m_color_type = color_space;
-        }
-
-        int get_bit_depth() const
-        {
-            return m_bit_depth;
-        }
-
-        void set_bit_depth(int bit_depth)
-        {
-            m_bit_depth = bit_depth;
-        }
-
-        interlace_type get_interlace_type() const
-        {
-            return m_interlace_type;
-        }
-
-        void set_interlace_type(interlace_type interlace)
-        {
-            m_interlace_type = interlace;
-        }
-
-        compression_type get_compression_type() const
-        {
-            return m_compression_type;
-        }
-
-        void set_compression_type(compression_type compression)
-        {
-            m_compression_type = compression;
-        }
-
-        filter_type get_filter_type() const
-        {
-            return m_filter_type;
-        }
-
-        void set_filter_type(filter_type filter)
-        {
-            m_filter_type = filter;
-        }
-
-        void get_palette(palette& plte) const
-        {
-            png_color* colors = 0;
-            int count = 0;
-            png_get_PLTE(m_png, m_info, & colors, & count);
-            plte.assign(colors, colors + count);
-        }
-
-        void set_palette(palette const& plte)
-        {
-            png_set_PLTE(m_png, m_info, const_cast< color* >(& plte[0]),
-                         plte.size());
         }
 
     protected:
@@ -189,14 +113,6 @@ namespace png
                          m_compression_type,
                          m_filter_type);
         }
-
-        uint_32 m_width;
-        uint_32 m_height;
-        int m_bit_depth;
-        color_type m_color_type;
-        interlace_type m_interlace_type;
-        compression_type m_compression_type;
-        filter_type m_filter_type;
     };
 
 } // namespace png

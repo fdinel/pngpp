@@ -71,31 +71,20 @@ namespace png
         };
 
         /**
-         * \brief  Sets default values for interlace type, compression
-         * type and filter type.
-         */
-        void set_defaults()
-        {
-            m_interlace_type = interlace_none;
-            m_compression_type = compression_type_default;
-            m_filter_type = filter_type_default;
-        }
-
-        /**
          * \brief  Constructs an empty image.
          */
         image()
         {
-            set_defaults();
+            setup_color_space();
         }
 
         /**
          * \brief  Constructs an empty image of specified width and height.
          */
         image(size_t width, size_t height)
-            : m_pixbuf(width, height)
         {
-            set_defaults();
+            setup_color_space();
+            resize(width, height);
         }
 
         /**
@@ -218,22 +207,16 @@ namespace png
         {
             reader rd(stream);
             rd.read_info();
-            m_interlace_type = rd.get_interlace_type();
-            m_compression_type = rd.get_compression_type();
-            m_filter_type = rd.get_filter_type();
-
-            if (traits::color_space == color_type_palette)
-            {
-                if (rd.has_chunk(chunk_PLTE))
-                {
-                    rd.get_info().get_palette(m_palette);
-                }
-            }
-
             transform(rd);
             rd.update_info();
+            m_info = rd.get_image_info();
+            setup_color_space();
+            if (traits::color_space != color_type_palette)
+            {
+                m_info.get_palette().clear();
+            }
 
-            m_pixbuf.resize(rd.get_width(), rd.get_height());
+            m_pixbuf.resize(m_info.get_width(), m_info.get_height());
             io_adapter adapter(m_pixbuf);
             rd.read_pixels(adapter);
 
@@ -296,22 +279,9 @@ namespace png
         void write(std::ostream& stream, transformation const& transform)
         {
             writer wr(stream);
-            wr.set_width(m_pixbuf.get_width());
-            wr.set_height(m_pixbuf.get_height());
-            wr.set_color_type(traits::color_space);
-            wr.set_bit_depth(traits::bit_depth);
-            wr.set_interlace_type(m_interlace_type);
-            wr.set_compression_type(m_compression_type);
-            wr.set_filter_type(m_filter_type);
+            wr.set_image_info(m_info);
 
 //             transform(wr);
-
-            if (traits::color_space == color_type_palette
-                && wr.get_color_type() == color_type_palette)
-            {
-                wr.get_info().set_palette(m_palette);
-            }
-
             wr.write_info();
 //             transform(wr,
 //                       traits::color_space,
@@ -351,6 +321,8 @@ namespace png
         void resize(size_t width, size_t height)
         {
             m_pixbuf.resize(width, height);
+            m_info.set_width(width);
+            m_info.set_height(height);
         }
 
         row& get_row(int index)
@@ -375,47 +347,47 @@ namespace png
 
         interlace_type get_interlace_type() const
         {
-            return m_interlace_type;
+            return m_info.get_interlace_type();
         }
 
         void set_interlace_type(interlace_type interlace)
         {
-            m_interlace_type = interlace;
+            m_info.set_interlace_type(interlace);
         }
 
         compression_type get_compression_type() const
         {
-            return m_compression_type;
+            return m_info.get_compression_type();
         }
 
         void set_compression_type(compression_type compression)
         {
-            m_compression_type = compression;
+            m_info.set_compression_type(compression);
         }
 
         filter_type get_filter_type() const
         {
-            return m_filter_type;
+            return m_info.get_filter_type();
         }
 
         void set_filter_type(filter_type filter)
         {
-            m_filter_type = filter;
+            m_info.set_filter_type(filter);
         }
 
         palette const& get_palette() const
         {
-            return m_palette;
+            return m_info.get_palette();
         }
 
         palette& get_palette()
         {
-            return m_palette;
+            return m_info.get_palette();
         }
 
         void set_palette(palette const& plte)
         {
-            m_palette = plte;
+            m_info.set_palette(plte);
         }
 
     protected:
@@ -432,7 +404,8 @@ namespace png
             {
                 typedef typename pixbuf::row_traits row_traits;
                 row& next_row = m_pixbuf.get_row(m_pos++);
-                return reinterpret_cast< byte* >(row_traits::get_data(next_row));
+                return reinterpret_cast< byte* >
+                    (row_traits::get_data(next_row));
             }
 
             void reset(int /*pass*/)
@@ -450,11 +423,14 @@ namespace png
             size_t m_pos;
         };
 
+        void setup_color_space()
+        {
+            m_info.set_color_type(traits::color_space);
+            m_info.set_bit_depth(traits::bit_depth);
+        }
+
+        image_info m_info;
         pixbuf m_pixbuf;
-        interlace_type m_interlace_type;
-        compression_type m_compression_type;
-        filter_type m_filter_type;
-        palette m_palette;
     };
 
 } // namespace png

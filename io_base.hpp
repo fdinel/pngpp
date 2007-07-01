@@ -53,8 +53,8 @@ namespace png
     public:
         explicit io_base(png_struct* png)
             : m_png(png),
-              m_info(png),
-              m_end_info(png)
+              m_info(*this, m_png),
+              m_end_info(*this, m_png)
         {
         }
 
@@ -65,6 +65,11 @@ namespace png
             assert(! m_end_info.get_png_info());
         }
 
+        png_struct* get_png_struct() const
+        {
+            return m_png;
+        }
+
         info& get_info()
         {
             return m_info;
@@ -73,6 +78,16 @@ namespace png
         info const& get_info() const
         {
             return m_info;
+        }
+
+        image_info const& get_image_info() const
+        {
+            return m_info;
+        }
+
+        void set_image_info(image_info const& info)
+        {
+            static_cast< image_info& >(m_info) = info; // slice it
         }
 
         end_info& get_end_info()

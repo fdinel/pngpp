@@ -38,6 +38,8 @@
 namespace png
 {
 
+    class io_base;
+
     /**
      * \brief  Internal class to hold PNG info or end_info.
      */
@@ -47,9 +49,10 @@ namespace png
         info_base& operator=(info_base const&);
 
     public:
-        explicit info_base(png_struct* png)
-            : m_png(png),
-              m_info(png_create_info_struct(png))
+        info_base(io_base& io, png_struct* png)
+            : m_io(io),
+              m_png(png),
+              m_info(png_create_info_struct(m_png))
         {
         }
 
@@ -64,6 +67,7 @@ namespace png
         }
 
     protected:
+        io_base& m_io;
         png_struct* m_png;
         png_info* m_info;
     };
