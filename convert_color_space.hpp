@@ -70,6 +70,9 @@ namespace png
             handle_palette(io);
             handle_rgb(io);
             handle_gray(io);
+
+            io.set_color_type(traits::color_space);
+            io.set_bit_depth(traits::bit_depth);
         }
 
         void operator()(writer& io) const;
@@ -162,6 +165,11 @@ namespace png
             {
 #ifdef PNG_READ_EXPAND_SUPPORTED
                 io.set_palette_to_rgb();
+
+                if (traits::color_space != color_type_palette)
+                {
+                    io.get_info().drop_palette();
+                }
 #else
                 throw error("indexed colors unexpected;"
                             " recompile with PNG_READ_EXPAND_SUPPORTED");

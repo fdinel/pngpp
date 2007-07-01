@@ -74,16 +74,16 @@ namespace png
          * \brief  Constructs an empty image.
          */
         image()
+            : m_info(make_image_info< pixel >())
         {
-            setup_color_space();
         }
 
         /**
          * \brief  Constructs an empty image of specified width and height.
          */
         image(size_t width, size_t height)
+            : m_info(make_image_info< pixel >())
         {
-            setup_color_space();
             resize(width, height);
         }
 
@@ -210,10 +210,12 @@ namespace png
             transform(rd);
             rd.update_info();
             m_info = rd.get_image_info();
-            setup_color_space();
-            if (traits::color_space != color_type_palette)
+
+            if (m_info.get_color_type() != traits::color_space
+                || m_info.get_bit_depth() != traits::bit_depth)
             {
-                m_info.get_palette().clear();
+                throw std::logic_error("color type and/or bit depth mismatch"
+                                       " in png::image::read()");
             }
 
             m_pixbuf.resize(m_info.get_width(), m_info.get_height());
@@ -422,12 +424,6 @@ namespace png
             pixbuf& m_pixbuf;
             size_t m_pos;
         };
-
-        void setup_color_space()
-        {
-            m_info.set_color_type(traits::color_space);
-            m_info.set_bit_depth(traits::bit_depth);
-        }
 
         image_info m_info;
         pixbuf m_pixbuf;

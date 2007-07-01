@@ -106,6 +106,11 @@ namespace png
             m_palette = plte;
         }
 
+        void drop_palette()
+        {
+            m_palette.clear();
+        }
+
     protected:
         uint_32 m_width;
         uint_32 m_height;
@@ -116,6 +121,17 @@ namespace png
         filter_type m_filter_type;
         palette m_palette;
     };
+
+    template< typename pixel >
+    image_info
+    make_image_info()
+    {
+        typedef pixel_traits< pixel > traits;
+        image_info info;
+        info.set_color_type(traits::color_space);
+        info.set_bit_depth(traits::bit_depth);
+        return info;
+    }
 
 } // namespace png
 
