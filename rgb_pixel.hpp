@@ -74,7 +74,7 @@ namespace png
      */
     template< typename T >
     struct pixel_traits< basic_rgb_pixel< T > >
-        : basic_pixel_traits< T, color_type_rgb, 3 >
+        : basic_pixel_traits< basic_rgb_pixel< T >, T, color_type_rgb >
     {
     };
 

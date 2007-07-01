@@ -79,7 +79,7 @@ namespace png
      */
     template< typename T >
     struct pixel_traits< basic_rgba_pixel< T > >
-        : basic_pixel_traits< T, color_type_rgba, 4 >,
+        : basic_pixel_traits< basic_rgba_pixel< T >, T, color_type_rgba >,
           basic_alpha_pixel_traits< T >
     {
     };

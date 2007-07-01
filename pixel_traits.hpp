@@ -32,6 +32,7 @@
 #define PNGPP_PIXEL_TRAITS_HPP_INCLUDED
 
 #include <limits>
+#include "types.hpp"
 
 namespace png
 {
@@ -49,25 +50,27 @@ namespace png
     {
     };
 
-    template< typename T,
+    template< typename pixel,
+              typename component,
               color_type col_type,
-              size_t chan_count,
-              int bits = std::numeric_limits< T >::digits >
+              size_t channel_count = sizeof(pixel) / sizeof(component),
+              int bits = std::numeric_limits< component >::digits >
     struct basic_pixel_traits
     {
-        typedef T component_type;
+        typedef pixel pixel_type;
+        typedef component component_type;
 
         static color_type const color_space = col_type;
-        static size_t const channels = chan_count;
+        static size_t const channels = channel_count;
         static int const bit_depth = bits;
     };
 
-    template< typename T >
+    template< typename component >
     struct basic_alpha_pixel_traits
     {
-        static T get_alpha_filler()
+        static component get_alpha_filler()
         {
-            return std::numeric_limits< T >::max();
+            return std::numeric_limits< component >::max();
         }
     };
 

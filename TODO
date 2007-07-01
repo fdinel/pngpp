@@ -7,4 +7,4 @@
 - change bit_depth to size_t
 - move tests sources to test/, examples to examples/
 + extract common code from generator/consumer
-- update pixel traits to detect channels count
++ update pixel traits to detect channels count

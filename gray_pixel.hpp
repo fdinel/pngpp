@@ -61,7 +61,7 @@ namespace png
      */
     template<>
     struct pixel_traits< gray_pixel >
-        : basic_pixel_traits< byte, color_type_gray, 1 >
+        : basic_pixel_traits< gray_pixel, byte, color_type_gray >
     {
     };
 
@@ -70,7 +70,7 @@ namespace png
      */
     template<>
     struct pixel_traits< gray_pixel_16 >
-        : basic_pixel_traits< uint_16, color_type_gray, 1 >
+        : basic_pixel_traits< gray_pixel_16, uint_16, color_type_gray >
     {
     };
 
@@ -79,7 +79,8 @@ namespace png
      */
     template< int bits >
     struct pixel_traits< packed_gray_pixel< bits > >
-        : basic_pixel_traits< byte, color_type_gray, 1, bits >
+        : basic_pixel_traits< packed_gray_pixel< bits >, byte,
+                              color_type_gray, /* channels = */ 1, bits >
     {
     };
 

@@ -75,7 +75,7 @@ namespace png
      */
     template<>
     struct pixel_traits< index_pixel >
-        : basic_pixel_traits< byte, color_type_palette, 1 >
+        : basic_pixel_traits< index_pixel, byte, color_type_palette >
     {
     };
 
@@ -84,7 +84,8 @@ namespace png
      */
     template< int bits >
     struct pixel_traits< packed_index_pixel< bits > >
-        : basic_pixel_traits< byte, color_type_palette, 1, bits >
+        : basic_pixel_traits< packed_index_pixel< bits >, byte,
+                              color_type_palette, /* channels = */ 1, bits >
     {
     };
 
