@@ -5,3 +5,4 @@
 + use doxygen
 - add optional and unknown chunks handling
 - change bit_depth to size_t
+- move tests sources to test/, examples to examples/

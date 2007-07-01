@@ -35,6 +35,7 @@
 #include "pixel_buffer.hpp"
 #include "reader.hpp"
 #include "writer.hpp"
+#include "generator.hpp"
 #include "convert_color_space.hpp"
 #include "palette.hpp"
 
@@ -280,19 +281,8 @@ namespace png
         template< class transformation >
         void write(std::ostream& stream, transformation const& transform)
         {
-            writer wr(stream);
-            wr.set_image_info(m_info);
-
-//             transform(wr);
-            wr.write_info();
-//             transform(wr,
-//                       traits::color_space,
-//                       traits::bit_depth);
-
-            io_adapter adapter(m_pixbuf);
-            wr.write_pixels(adapter);
-
-            wr.write_end_info();
+            pixel_generator pixgen(m_info, m_pixbuf);
+            pixgen.write(stream);
         }
 
         pixbuf& get_pixbuf()
@@ -423,6 +413,27 @@ namespace png
         private:
             pixbuf& m_pixbuf;
             size_t m_pos;
+        };
+
+        class pixel_generator
+            : public generator< pixel, pixel_generator >
+        {
+        public:
+            pixel_generator(image_info const& info, pixbuf& pixels)
+                : generator< pixel, pixel_generator >(info),
+                  m_pixbuf(pixels)
+            {
+            }
+
+            byte* get_next_row(size_t pos)
+            {
+                typedef typename pixbuf::row_traits row_traits;
+                return reinterpret_cast< byte* >
+                    (row_traits::get_data(m_pixbuf.get_row(pos)));
+            }
+
+        private:
+            pixbuf& m_pixbuf;
         };
 
         image_info m_info;

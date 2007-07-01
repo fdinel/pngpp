@@ -90,39 +90,13 @@ namespace png
             m_info.write();
         }
 
-        /**
-         * \brief  Writes the whole PNG image data from a pixel buffer.
-         */
-        template< typename pixels >
-        void write_pixels(pixels& pix) const
+        void write_row(byte* bytes)
         {
-            size_t pass_count;
-            if (get_interlace_type() != interlace_none)
-            {
-#ifdef PNG_WRITE_INTERLACING_SUPPORTED
-                pass_count = set_interlace_handling();
-#else
-                throw error("Cannot write interlaced image"
-                            " -- interlace handling disabled.");
-#endif
-            }
-            else
-            {
-                pass_count = 1;
-            }
             if (setjmp(m_png->jmpbuf))
             {
                 throw error(m_error);
             }
-            for (size_t pass = 0; pass < pass_count; ++pass)
-            {
-                pix.reset(pass);
-
-                while (!pix.end())
-                {
-                    png_write_row(m_png, pix.next());
-                }
-            }
+            png_write_row(m_png, bytes);
         }
 
         /**
