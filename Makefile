@@ -93,7 +93,7 @@ thorough-clean: clean test-clean
 check: test
 
 test:
-	$(MAKE) test -C test $(MAKEFLAGS)
+	$(MAKE) test -C test $(MAKEFLAGS) PNGPP=`pwd`
 
 test-clean:
 	$(MAKE) clean -C test $(MAKEFLAGS)
@@ -101,7 +101,7 @@ test-clean:
 test-compile-headers: *.hpp
 	for i in *.hpp; do \
 		echo '#include "'$$i'"' >$$i.cpp \
-		&& g++ -c $$i.cpp `$(libpng_config) --cflags`; \
+		&& g++ -c $$i.cpp $(make_cflags) `$(libpng_config) --cflags`; \
 	done
 	rm -f *.hpp.o *.hpp.cpp
 

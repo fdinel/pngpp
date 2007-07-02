@@ -32,7 +32,11 @@ ifndef PREFIX
 PREFIX := /usr/local
 endif
 
-make_cflags := -Wall $(CFLAGS) -I$(PREFIX)/include -I..
+ifndef PNGPP
+PNGPP := ..
+endif
+
+make_cflags := -Wall $(CFLAGS) -I$(PREFIX)/include -I$(PNGPP)
 make_ldflags := $(LDFLAGS) -L$(PREFIX)/lib
 
 ifndef NDEBUG
