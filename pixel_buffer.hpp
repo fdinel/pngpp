@@ -31,6 +31,7 @@
 #ifndef PNGPP_PIXEL_BUFFER_HPP_INCLUDED
 #define PNGPP_PIXEL_BUFFER_HPP_INCLUDED
 
+#include <cassert>
 #include <cstddef>
 #include <stdexcept>
 #include <vector>

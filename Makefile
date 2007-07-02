@@ -96,7 +96,15 @@ test: $(target_test)
 test-clean:
 	make clean -C test
 
-.PHONY: all install dist clean thorough-clean check test test-clean
+test-compile-headers: *.hpp
+	for i in *.hpp; do \
+		echo '#include "'$$i'"' >$$i.cpp \
+		&& g++ -c $$i.cpp `$(libpng_config) --cflags`; \
+	done
+	rm -f *.hpp.o *.hpp.cpp
+
+.PHONY: all install dist clean thorough-clean check test test-clean \
+  test-compile-headers
 
 $(target_test_convert): test-convert.cpp *.hpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \

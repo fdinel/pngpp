@@ -32,6 +32,8 @@
 #define PNGPP_CONSUMER_HPP_INCLUDED
 
 #include <cassert>
+#include <stdexcept>
+#include "error.hpp"
 #include "streaming_base.hpp"
 #include "reader.hpp"
 #include "pixel_buffer.hpp"

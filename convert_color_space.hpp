@@ -31,10 +31,13 @@
 #ifndef PNGPP_CONVERT_COLOR_SPACE_HPP_INCLUDED
 #define PNGPP_CONVERT_COLOR_SPACE_HPP_INCLUDED
 
+#include "error.hpp"
 #include "rgb_pixel.hpp"
 #include "rgba_pixel.hpp"
 #include "gray_pixel.hpp"
 #include "ga_pixel.hpp"
+#include "reader.hpp"
+#include "writer.hpp"
 
 namespace png
 {

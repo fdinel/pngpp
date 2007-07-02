@@ -33,6 +33,7 @@
 
 #include "types.hpp"
 #include "palette.hpp"
+#include "pixel_traits.hpp"
 
 namespace png
 {
