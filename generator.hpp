@@ -39,7 +39,8 @@ namespace png
 {
 
     template< typename pixel, class pixgen,
-              class info_holder = def_image_info_holder >
+              class info_holder = def_image_info_holder,
+              bool interlacing_supported = false >
     class generator
         : public streaming_base< pixel, info_holder >
     {
@@ -54,10 +55,18 @@ namespace png
             if (this->get_info().get_interlace_type() != interlace_none)
             {
 #ifdef PNG_WRITE_INTERLACING_SUPPORTED
-                pass_count = wr.set_interlace_handling();
+                if (interlacing_supported)
+                {
+                    pass_count = wr.set_interlace_handling();
+                }
+                else
+                {
+                    throw std::logic_error("Cannot write interlaced image --"
+                                           " generator does not support it.");
+                }
 #else
-                throw error("Cannot write interlaced image"
-                            " -- interlace handling disabled.");
+                throw error("Cannot write interlaced image --"
+                            " interlace handling disabled.");
 #endif
             }
             else
@@ -65,8 +74,6 @@ namespace png
                 pass_count = 1;
             }
             pixgen* pixel_gen = static_cast< pixgen* >(this);
-            assert(pixel_gen); // TODO: can this be caught at
-                               // comple/link time?
             for (size_t pass = 0; pass < pass_count; ++pass)
             {
                 pixel_gen->reset(pass);

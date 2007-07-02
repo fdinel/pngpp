@@ -34,12 +34,14 @@
 #include <cassert>
 #include "streaming_base.hpp"
 #include "reader.hpp"
+#include "pixel_buffer.hpp"
 
 namespace png
 {
 
     template< typename pixel, class pixcon,
-              class info_holder = def_image_info_holder >
+              class info_holder = def_image_info_holder,
+              bool interlacing_supported = false >
     class consumer
         : public streaming_base< pixel, info_holder >
     {
@@ -60,8 +62,8 @@ namespace png
 #ifdef PNG_READ_INTERLACING_SUPPORTED
                 pass_count = rd.set_interlace_handling();
 #else
-                throw error("Cannot read interlaced image"
-                            " -- interlace handling disabled.");
+                throw error("Cannot read interlaced image --"
+                            " interlace handling disabled.");
 #endif
             }
             else
@@ -80,17 +82,12 @@ namespace png
             this->get_info() = rd.get_image_info();
 
             pixcon* pixel_con = static_cast< pixcon* >(this);
-            assert(pixel_con); // TODO: can this be caught at
-                               // comple/link time?
-            for (size_t pass = 0; pass < pass_count; ++pass)
+            if (pass_count > 1 && !interlacing_supported)
             {
-                pixel_con->reset(pass);
-
-                for (size_t pos = 0; pos < this->get_info().get_height(); ++pos)
-                {
-                    rd.read_row(pixel_con->get_next_row(pos));
-                }
+                skip_interlaced_rows(rd, pass_count);
+                pass_count = 1;
             }
+            read_rows(rd, pass_count, pixel_con);
 
             rd.read_end_info();
         }
@@ -106,6 +103,32 @@ namespace png
         consumer(size_t width, size_t height)
             : base(width, height)
         {
+        }
+
+    private:
+        void skip_interlaced_rows(reader& rd, size_t pass_count)
+        {
+            typedef std::vector< pixel > row;
+            typedef row_traits< row > row_traits_type;
+            row dummy_row(this->get_info().get_width());
+            for (size_t pass = 1; pass < pass_count; ++pass)
+            {
+                rd.read_row(reinterpret_cast< byte* >
+                            (row_traits_type::get_data(dummy_row)));
+            }
+        }
+
+        void read_rows(reader& rd, size_t pass_count, pixcon* pixel_con)
+        {
+            for (size_t pass = 0; pass < pass_count; ++pass)
+            {
+                pixel_con->reset(pass);
+
+                for (size_t pos = 0; pos < this->get_info().get_height(); ++pos)
+                {
+                    rd.read_row(pixel_con->get_next_row(pos));
+                }
+            }
         }
     };
 

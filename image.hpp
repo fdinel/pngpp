@@ -389,13 +389,14 @@ namespace png
 
         class pixel_consumer
             : public streaming_impl< consumer< pixel, pixel_consumer,
-                                               image_info_ref_holder > >
+                                               image_info_ref_holder,
+                                               /* interlacing = */ true > >
         {
         public:
             pixel_consumer(image_info& info, pixbuf& pixels)
                 : streaming_impl< consumer< pixel, pixel_consumer,
-                                            image_info_ref_holder > >(info,
-                                                                      pixels)
+                                            image_info_ref_holder,
+                                            true > >(info, pixels)
             {
             }
 
@@ -411,13 +412,14 @@ namespace png
 
         class pixel_generator
             : public streaming_impl< generator< pixel, pixel_generator,
-                                                image_info_ref_holder > >
+                                                image_info_ref_holder,
+                                                /* interlacing = */ true > >
         {
         public:
             pixel_generator(image_info& info, pixbuf& pixels)
                 : streaming_impl< generator< pixel, pixel_generator,
-                                             image_info_ref_holder > >(info,
-                                                                       pixels)
+                                             image_info_ref_holder,
+                                             true > >(info, pixels)
             {
             }
         };
