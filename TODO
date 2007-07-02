@@ -5,8 +5,9 @@
 + use doxygen
 - add optional and unknown chunks handling
 + change bit_depth to size_t
-- move tests sources to test/, examples to examples/
++ move tests sources to test/, examples to examples/
 + extract common code from generator/consumer
 + update pixel traits to detect channels count
 - unify template parameters naming
 + make sure all headers compile on their own
+- add compilation dependency detection

@@ -28,17 +28,11 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-version := 0.2.0
-
 ifndef PREFIX
 PREFIX := /usr/local
 endif
 
-ifdef MINGW
-bin_suffix := .exe
-endif
-
-make_cflags := -Wall $(CFLAGS) -I$(PREFIX)/include
+make_cflags := -Wall $(CFLAGS) -I$(PREFIX)/include -I..
 make_ldflags := $(LDFLAGS) -L$(PREFIX)/lib
 
 ifndef NDEBUG
@@ -50,62 +44,19 @@ ifndef libpng_config
 libpng_config := libpng-config
 endif
 
-build_files := Makefile
-info_files := AUTHORS COPYING INSTALL README TODO
-header_files := *.hpp
-source_files :=
-
-dist_dir := png++-$(version)
-dist_package := png++-$(version).tar.gz
-dist_files := $(build_files) $(info_files) \
-  $(header_files) $(source_files)
-dist_subdirs := example test
+targets := pixel_generator$(bin_suffix)
 
 all: $(targets)
 
-install:
-	mkdir -p $(PREFIX)/include/png++
-	cp *.hpp $(PREFIX)/include/png++
-
-dist: dist-mkdir dist-copy-files dist-package
-
-dist-mkdir:
-	rm -rf $(dist_dir)
-	mkdir $(dist_dir)
-
 dist-copy-files:
-	cp $(dist_files) $(dist_dir)
-	for i in $(dist_subdirs); do \
-		$(MAKE) dist-copy-files -C $$i $(MAKEFLAGS) \
-		  dist_dir=`pwd`/$(dist_dir); \
-	done
-
-dist-package:
-	rm -f $(dist_package)
-	tar -zcf $(dist_package) $(dist_dir) --exclude=.svn --exclude='*~'
-	rm -rf $(dist_dir)
+	mkdir $(dist_dir)/example
+	cp *.cpp Makefile $(dist_dir)/example
 
 clean:
 	rm -f $(targets)
 
-thorough-clean: clean test-clean
+.PHONY: all dist-copy-files clean
 
-check: test
-
-test:
-	$(MAKE) test -C test $(MAKEFLAGS)
-
-test-clean:
-	$(MAKE) clean -C test $(MAKEFLAGS)
-
-test-compile-headers: *.hpp
-	for i in *.hpp; do \
-		echo '#include "'$$i'"' >$$i.cpp \
-		&& g++ -c $$i.cpp `$(libpng_config) --cflags`; \
-	done
-	rm -f *.hpp.o *.hpp.cpp
-
-.PHONY: all install \
-  dist dist-mkdir dist-copy-files dist-package \
-  clean thorough-clean \
-  check test test-clean test-compile-headers
+%$(bin_suffix): %.cpp
+	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
+	  `$(libpng_config) --cflags --ldflags --libs`

@@ -64,25 +64,20 @@ int
 main()
 try
 {
-    {
-        png::image< png::index_pixel_1 > image;
-        generate_image(image, "palette1.png.out");
-    }
-    {
-        png::image< png::index_pixel_2 > image;
-        generate_image(image, "palette2.png.out");
-    }
-    {
-        png::image< png::index_pixel_4 > image;
-        generate_image(image, "palette4.png.out");
-    }
-    {
-        png::image< png::index_pixel > image;
-        generate_image(image, "palette8.png.out");
-    }
+    png::image< png::index_pixel_1 > image1;
+    generate_image(image1, "palette1.png.out");
+
+    png::image< png::index_pixel_2 > image2;
+    generate_image(image2, "palette2.png.out");
+
+    png::image< png::index_pixel_4 > image4;
+    generate_image(image4, "palette4.png.out");
+
+    png::image< png::index_pixel > image8;
+    generate_image(image8, "palette8.png.out");
 }
 catch (std::exception const& error)
 {
-    std::cerr << "test-gen-palette: " << error.what() << std::endl;
+    std::cerr << "generate_palette: " << error.what() << std::endl;
     return EXIT_FAILURE;
 }

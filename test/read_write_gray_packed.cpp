@@ -36,84 +36,42 @@
 void
 print_usage()
 {
-    std::cerr << "usage: test-convert RGB|RGBA|GRAY|GA 8|16 INFILE OUTFILE"
+    std::cerr << "usage: read_write_gray_packed 1|2|4 INFILE OUTFILE"
               << std::endl;
+}
+
+template< class pixel >
+void
+test_image(char const* infile, char const* outfile)
+{
+    png::image< pixel > image(infile, png::require_color_space< pixel >());
+    image.write(outfile);
 }
 
 int
 main(int argc, char* argv[])
 try
 {
-    if (argc != 5)
+    if (argc != 4)
     {
         print_usage();
         return EXIT_FAILURE;
     }
-    char const* space = argv[1];
-    int bits = atoi(argv[2]);
-    char const* infile = argv[3];
-    char const* outfile = argv[4];
+    char const* bits = argv[1];
+    char const* infile = argv[2];
+    char const* outfile = argv[3];
 
-    if (bits != 8 && bits != 16)
+    if (strcmp(bits, "1") == 0)
     {
-        print_usage();
-        return EXIT_FAILURE;
+        test_image< png::gray_pixel_1 >(infile, outfile);
     }
-    if (strcmp(space, "RGB") == 0)
+    else if (strcmp(bits, "2") == 0)
     {
-        if (bits == 16)
-        {
-            png::image< png::rgb_pixel_16 > image(infile);
-            image.write(outfile);
-        }
-        else
-        {
-            png::image< png::rgb_pixel > image(infile);
-            image.write(outfile);
-        }
+        test_image< png::gray_pixel_2 >(infile, outfile);
     }
-    else if (strcmp(space, "RGBA") == 0)
+    else if (strcmp(bits, "4") == 0)
     {
-        if (bits == 16)
-        {
-            png::image< png::rgba_pixel_16 > image(infile);
-            image.write(outfile);
-        }
-        else
-        {
-            png::image< png::rgba_pixel > image(infile);
-            image.write(outfile);
-        }
-    }
-    else if (strcmp(space, "GRAY") == 0)
-    {
-        if (bits == 16)
-        {
-            png::image< png::gray_pixel_16 > image(infile);
-            image.write(outfile);
-        }
-        else
-        {
-            png::image< png::gray_pixel > image(infile);
-            image.write(outfile);
-        }
-    }
-    else if (strcmp(space, "GA") == 0)
-    {
-        if (bits == 16)
-        {
-            png::ga_pixel_16 ga(1); // test alpha_pixel_traits
-
-            png::image< png::ga_pixel_16 > image(infile);
-            image.write(outfile);
-        }
-        else
-        {
-            png::ga_pixel ga(1); // test alpha_pixel_traits
-
-            png::image< png::ga_pixel > image(infile);
-            image.write(outfile);
-        }
+        test_image< png::gray_pixel_4 >(infile, outfile);
     }
     else
     {
@@ -123,6 +81,6 @@ try
 }
 catch (std::exception const& error)
 {
-    std::cerr << "test-convert: " << error.what() << std::endl;
+    std::cerr << "read_write_gray_packed: " << error.what() << std::endl;
     return EXIT_FAILURE;
 }

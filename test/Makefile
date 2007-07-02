@@ -1,37 +1,114 @@
-test: test-convert test-gp test-gp-rd test-gen-palette
+#
+# Copyright (C) 2007   Alex Shulgin
+#
+# This file is part of png++ the C++ wrapper for libpng.  Png++ is free
+# software; the exact copying conditions are as follows:
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. The name of the author may not be used to endorse or promote products
+# derived from this software without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+# OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
+# NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+# TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+ifndef PREFIX
+PREFIX := /usr/local
+endif
 
-test-convert:
+make_cflags := -Wall $(CFLAGS) -I$(PREFIX)/include -I..
+make_ldflags := $(LDFLAGS) -L$(PREFIX)/lib
+
+ifndef NDEBUG
+make_cflags := $(make_cflags) -g
+make_ldflags := $(make_ldflags) -g
+endif
+
+ifndef libpng_config
+libpng_config := libpng-config
+endif
+
+targets := convert_color_space$(bin_suffix) \
+  generate_gray_packed$(bin_suffix) \
+  read_write_gray_packed$(bin_suffix) \
+  generate_palette$(bin_suffix)
+
+all: $(targets)
+
+dist-copy-files:
+	mkdir $(dist_dir)/test
+	cp *.png *.cpp Makefile README $(dist_dir)/test
+	mkdir $(dist_dir)/test/cmp
+	cp cmp/*.out $(dist_dir)/test/cmp
+
+clean: clean-targets clean-tests-output
+
+clean-targets:
+	rm -f $(targets)
+
+test: all \
+  test-convert_color_space \
+  test-generate_gray_packed \
+  test-read_write_gray_packed \
+  test-generate_palette
+
+test-convert_color_space:
 	for i in *.png; do \
 		for j in RGB RGBA GRAY GA; do \
 			for k in 8 16; do \
 				out=$$i.$$j.$$k.out; \
-				../test-convert $$j $$k $$i $$out \
+				./convert_color_space $$j $$k $$i $$out \
 				&& cmp $$out cmp/$$out; \
 			done; \
 		done; \
 	done
 
-test-gp:
+test-generate_gray_packed:
+	./generate_gray_packed
 	for i in 1 2 4; do \
-		out=gp$$i.png.out; \
-		../test-gp $$i $$out && cmp $$out cmp/$$out; \
+		out=gray_packed_$$i.png.out; \
+		cmp $$out cmp/$$out; \
 	done
 
-test-gp-rd:
+test-read_write_gray_packed:
 	for i in 1 2 4; do \
 		in=basn0g0$$i.png; \
 		out=$$in.out; \
-		../test-gp-rd $$i $$in $$out && cmp $$out cmp/$$out; \
+		./read_write_gray_packed $$i $$in $$out \
+		&& cmp $$out cmp/$$out; \
 	done
 
-test-gen-palette:
-	../test-gen-palette
+test-generate_palette:
+	./generate_palette
 	for i in 1 2 4 8; do \
 		out=palette$$i.png.out; \
 		cmp $$out cmp/$$out; \
 	done
 
-clean:
+clean-tests-output:
 	rm -f *.out
 
-.PHONY: test clean
+.PHONY: all dist-copy-files \
+  clean clean-targets \
+  test test-convert_color_space \
+  clean-tests-output
+
+%$(bin_suffix): %.cpp
+	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
+	  `$(libpng_config) --cflags --ldflags --libs`

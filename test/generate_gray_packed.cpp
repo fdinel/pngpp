@@ -31,53 +31,40 @@
 #include <iostream>
 #include <ostream>
 
-#include <cstdlib>
-
 #include "png.hpp"
 
-class pixel_generator
-    : public png::generator< png::gray_pixel_1, pixel_generator >
+template< class pixel >
+void
+generate_image(png::image< pixel >& image, char const* filename)
 {
-public:
-    pixel_generator(size_t width, size_t height)
-        : png::generator< png::gray_pixel_1, pixel_generator >(width, height),
-          m_row(width)
+    for (size_t j = 0; j < image.get_height(); ++j)
     {
-        for (size_t i = 0; i < m_row.size(); ++i)
+        for (size_t i = 0; i < image.get_width(); ++i)
         {
-            m_row[i] = i > m_row.size() / 2 ? 1 : 0;
+            image.set_pixel(i, j, pixel(i + j));
         }
     }
-
-    png::byte* get_next_row(size_t /*pos*/)
-    {
-        size_t i = std::rand() % m_row.size();
-        size_t j = std::rand() % m_row.size();
-        png::gray_pixel_1 t = m_row[i];
-        m_row[i] = m_row[j];
-        m_row[j] = t;
-        return reinterpret_cast< png::byte* >(row_traits::get_data(m_row));
-    }
-
-private:
-    typedef png::packed_pixel_row< png::gray_pixel_1 > row;
-	typedef png::row_traits< row > row_traits;
-	row m_row;
-};
+    image.write(filename);
+}
 
 int
-main()
+main(int argc, char* argv[])
 try
 {
     size_t const width = 32;
-    size_t const height = 512;
+    size_t const height = 32;
 
-    std::ofstream file("output.png", std::ios::binary);
-    pixel_generator generator(width, height);
-    generator.write(file);
+    png::image< png::gray_pixel_1 > image1(width, height);
+    generate_image(image1, "gray_packed_1.png.out");
+
+    png::image< png::gray_pixel_2 > image2(width, height);
+    generate_image(image2, "gray_packed_2.png.out");
+
+    png::image< png::gray_pixel_4 > image4(width, height);
+    generate_image(image4, "gray_packed_4.png.out");
 }
 catch (std::exception const& error)
 {
-    std::cerr << "example-generator: " << error.what() << std::endl;
+    std::cerr << "generate_gray_packed: " << error.what() << std::endl;
     return EXIT_FAILURE;
 }
