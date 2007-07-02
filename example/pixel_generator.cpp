@@ -28,12 +28,11 @@
  * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+#include <cstdlib>
 #include <iostream>
 #include <ostream>
 
-#include <cstdlib>
-
-#include "png.hpp"
+#include <png.hpp>
 
 class pixel_generator
     : public png::generator< png::gray_pixel_1, pixel_generator >

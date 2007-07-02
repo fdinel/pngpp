@@ -48,15 +48,18 @@ ifndef libpng_config
 libpng_config := libpng-config
 endif
 
-targets := pixel_generator$(bin_suffix)
+sources := pixel_generator.cpp
 
-all: $(targets)
+deps := $(sources:.cpp=.dep)
+targets := $(sources:.cpp=$(bin_suffix))
+
+all: $(deps) $(targets)
 
 dist-copy-files:
 	mkdir $(dist_dir)/example
-	cp *.cpp Makefile $(dist_dir)/example
+	cp $(sources) Makefile $(dist_dir)/example
 
-clean:
+clean: clean-deps
 	rm -f $(targets)
 
 .PHONY: all dist-copy-files clean
@@ -64,3 +67,12 @@ clean:
 %$(bin_suffix): %.cpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`
+
+%.dep: %.cpp
+	g++ -M $(CPPFLAGS) $(make_cflags) $< -o- | \
+	  sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@
+
+clean-deps:
+	rm -f $(deps)
+
+include $(deps)

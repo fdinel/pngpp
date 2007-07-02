@@ -48,20 +48,23 @@ ifndef libpng_config
 libpng_config := libpng-config
 endif
 
-targets := convert_color_space$(bin_suffix) \
-  generate_gray_packed$(bin_suffix) \
-  read_write_gray_packed$(bin_suffix) \
-  generate_palette$(bin_suffix)
+sources := convert_color_space.cpp \
+  generate_gray_packed.cpp \
+  read_write_gray_packed.cpp \
+  generate_palette.cpp
 
-all: $(targets)
+deps := $(sources:.cpp=.dep)
+targets := $(sources:.cpp=$(bin_suffix))
+
+all: $(deps) $(targets)
 
 dist-copy-files:
 	mkdir $(dist_dir)/test
-	cp *.png *.cpp Makefile README $(dist_dir)/test
+	cp $(sources) Makefile README *.png $(dist_dir)/test
 	mkdir $(dist_dir)/test/cmp
 	cp cmp/*.out $(dist_dir)/test/cmp
 
-clean: clean-targets clean-tests-output
+clean: clean-targets clean-tests-output clean-deps
 
 clean-targets:
 	rm -f $(targets)
@@ -111,8 +114,18 @@ clean-tests-output:
 .PHONY: all dist-copy-files \
   clean clean-targets \
   test test-convert_color_space \
-  clean-tests-output
+  clean-tests-output \
+  clean-deps
 
 %$(bin_suffix): %.cpp
 	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
 	  `$(libpng_config) --cflags --ldflags --libs`
+
+%.dep: %.cpp
+	g++ -M $(CPPFLAGS) $(make_cflags) $< -o- | \
+	  sed 's/\($*\)\.o[ :]*/\1.o $@ : /g' > $@
+
+clean-deps:
+	rm -f $(deps)
+
+include $(deps)

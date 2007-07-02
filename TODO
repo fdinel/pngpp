@@ -10,4 +10,4 @@
 + update pixel traits to detect channels count
 - unify template parameters naming
 + make sure all headers compile on their own
-- add compilation dependency detection
++ add compilation dependency detection

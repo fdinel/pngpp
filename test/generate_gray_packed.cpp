@@ -31,7 +31,7 @@
 #include <iostream>
 #include <ostream>
 
-#include "png.hpp"
+#include <png.hpp>
 
 template< class pixel >
 void
