@@ -41,7 +41,8 @@
 namespace png
 {
 
-    template< typename pixel, class pixcon,
+    template< typename pixel,
+              class pixcon,
               class info_holder = def_image_info_holder,
               bool interlacing_supported = false >
     class consumer
@@ -74,8 +75,8 @@ namespace png
             }
 
             rd.update_info();
-            if (rd.get_color_type() != traits::color_space
-                || rd.get_bit_depth() != traits::bit_depth)
+            if (rd.get_color_type() != traits::get_color_type()
+                || rd.get_bit_depth() != traits::get_bit_depth())
             {
                 throw std::logic_error("color type and/or bit depth mismatch"
                                        " in png::consumer::read()");

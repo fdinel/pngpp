@@ -85,8 +85,8 @@ dist-package:
 	tar -zcf $(dist_package) $(dist_dir) --exclude=.svn --exclude='*~'
 	rm -rf $(dist_dir)
 
-clean:
-	rm -f $(targets)
+clean: test-clean
+#	rm -f $(targets)
 
 thorough-clean: clean test-clean
 

@@ -8,6 +8,7 @@
 + move tests sources to test/, examples to examples/
 + extract common code from generator/consumer
 + update pixel traits to detect channels count
-- unify template parameters naming
++ unify template parameters naming
 + make sure all headers compile on their own
 + add compilation dependency detection
+- add pixel_buffer/image::operator[]

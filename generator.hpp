@@ -40,7 +40,8 @@
 namespace png
 {
 
-    template< typename pixel, class pixgen,
+    template< typename pixel,
+              class pixgen,
               class info_holder = def_image_info_holder,
               bool interlacing_supported = false >
     class generator

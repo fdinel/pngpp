@@ -193,8 +193,8 @@ namespace png
     {
         typedef pixel_traits< pixel > traits;
         image_info info;
-        info.set_color_type(traits::color_space);
-        info.set_bit_depth(traits::bit_depth);
+        info.set_color_type(traits::get_color_type());
+        info.set_bit_depth(traits::get_bit_depth());
         return info;
     }
 

@@ -74,8 +74,8 @@ namespace png
             handle_rgb(io);
             handle_gray(io);
 
-            io.set_color_type(traits::color_space);
-            io.set_bit_depth(traits::bit_depth);
+            io.set_color_type(traits::get_color_type());
+            io.set_bit_depth(traits::get_bit_depth());
         }
 
         void operator()(writer& io) const;
@@ -107,7 +107,7 @@ namespace png
 
         static void handle_16(reader& io)
         {
-            if (io.get_bit_depth() == 16 && traits::bit_depth == 8)
+            if (io.get_bit_depth() == 16 && traits::get_bit_depth() == 8)
             {
 #ifdef PNG_READ_16_TO_8_SUPPORTED
                 io.set_strip_16();
@@ -116,11 +116,11 @@ namespace png
                             " recompile with PNG_READ_16_TO_8_SUPPORTED");
 #endif
             }
-            if (io.get_bit_depth() != 16 && traits::bit_depth == 16)
+            if (io.get_bit_depth() != 16 && traits::get_bit_depth() == 16)
             {
 #ifdef PNG_READ_USER_TRANSFORM_SUPPORTED
                 io.set_read_user_transform(expand_8_to_16);
-                io.set_user_transform_info(NULL, 16, traits::channels);
+                io.set_user_transform_info(NULL, 16, traits::get_channels());
 #else
                 throw error("expected 16-bit data but found 8-bit;"
                             " recompile with"
@@ -132,7 +132,7 @@ namespace png
         static void handle_alpha(reader& io, uint_32 filler)
         {
             bool src_alpha = io.get_color_type() & color_mask_alpha;
-            bool dst_alpha = traits::color_space & color_mask_alpha;
+            bool dst_alpha = traits::get_color_type() & color_mask_alpha;
             if (src_alpha && !dst_alpha)
             {
 #ifdef PNG_READ_STRIP_ALPHA_SUPPORTED
@@ -169,7 +169,7 @@ namespace png
 #ifdef PNG_READ_EXPAND_SUPPORTED
                 io.set_palette_to_rgb();
 
-                if (traits::color_space != color_type_palette)
+                if (traits::get_color_type() != color_type_palette)
                 {
                     io.get_info().drop_palette();
                 }
@@ -184,7 +184,7 @@ namespace png
         {
             bool src_rgb =
                 io.get_color_type() & (color_mask_rgb | color_mask_palette);
-            bool dst_rgb = traits::color_space & color_mask_rgb;
+            bool dst_rgb = traits::get_color_type() & color_mask_rgb;
             if (src_rgb && !dst_rgb)
             {
 #ifdef PNG_READ_RGB_TO_GRAY_SUPPORTED
@@ -209,7 +209,7 @@ namespace png
         {
             if ((io.get_color_type() & ~color_mask_alpha) == color_type_gray)
             {
-                if (io.get_bit_depth() < 8 && traits::bit_depth >= 8)
+                if (io.get_bit_depth() < 8 && traits::get_bit_depth() >= 8)
                 {
 #ifdef PNG_READ_EXPAND_SUPPORTED
                     io.set_gray_1_2_4_to_8();

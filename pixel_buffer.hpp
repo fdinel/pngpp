@@ -48,16 +48,17 @@ namespace png
     /**
      * \brief  Class template which represents image pixel data.
      */
-    template< typename pixel, typename row_type,
-              class row_traits_type = row_traits< row_type > >
+    template< typename pixel,
+              typename row,
+              class traits = row_traits< row > >
     class basic_pixel_buffer
     {
     public:
         /**
          * \brief  A row of pixel data.
          */
-        typedef row_type row;
-        typedef row_traits_type row_traits;
+        typedef row row_type;
+        typedef traits row_traits;
 
         /**
          * \brief  Constructs an empty 0x0 pixel buffer object.
@@ -107,27 +108,27 @@ namespace png
             }
         }
 
-        row& get_row(int index)
+        row_type& get_row(size_t index)
         {
             return m_rows.at(index);
         }
 
-        row const& get_row(int index) const
+        row_type const& get_row(size_t index) const
         {
             return m_rows.at(index);
         }
 
-        void put_row(int index, row const& r)
+        void put_row(size_t index, row_type const& r)
         {
             m_rows.at(index) = r;
         }
 
-        pixel get_pixel(int x, int y) const
+        pixel get_pixel(size_t x, size_t y) const
         {
             return get_row(y).at(x);
         }
 
-        void set_pixel(int x, int y, pixel p)
+        void set_pixel(size_t x, size_t y, pixel p)
         {
             get_row(y).at(x) = p;
         }
@@ -135,7 +136,7 @@ namespace png
     protected:
         size_t m_width;
         size_t m_height;
-        typedef std::vector< row > row_vec;
+        typedef std::vector< row_type > row_vec;
         row_vec m_rows;
     };
 
@@ -165,7 +166,106 @@ namespace png
         }
     };
 
-    template< class packed_pixel_type >
+    namespace
+    {
+
+        template< class pixel, typename reference >
+        class basic_packed_pixel_proxy
+        {
+        public:
+            explicit basic_packed_pixel_proxy(reference ref)
+                : m_ref(ref),
+                  m_shift(0)
+            {
+            }
+
+            basic_packed_pixel_proxy(reference ref, size_t index)
+                : m_ref(ref),
+                  m_shift(get_shift(index))
+            {
+            }
+
+            operator pixel() const
+            {
+                return pixel((m_ref >> m_shift) & pixel::get_bit_mask());
+            }
+
+        protected:
+            /*
+             * bits: . .   .
+             *    1: 7 6 5 4 3 2 1 0
+             *    2:   6   4   2   0
+             *    4:       4       0
+             */
+            static size_t get_shift(size_t index)
+            {
+                size_t const bits = pixel::get_bit_depth();
+                return (8 - bits) - (index % get_pixels_per_byte()) * bits;
+            }
+
+            static size_t get_pixels_per_byte()
+            {
+                return 8 / pixel::get_bit_depth();
+            }
+
+            reference m_ref;
+            size_t m_shift;
+        };
+
+        template< class pixel >
+        class const_packed_pixel_proxy
+            : public basic_packed_pixel_proxy< pixel, byte const& >
+        {
+        public:
+            const_packed_pixel_proxy(byte const& ref, size_t index)
+                : basic_packed_pixel_proxy< pixel, byte const& >(ref, index)
+            {
+            }
+        };
+
+        template< class pixel >
+        class packed_pixel_proxy
+            : public basic_packed_pixel_proxy< pixel, byte& >
+        {
+        public:
+            typedef basic_packed_pixel_proxy< pixel, byte& > basic_proxy;
+
+            packed_pixel_proxy(byte& ref, size_t index)
+                : basic_proxy(ref, index)
+            {
+            }
+
+            packed_pixel_proxy(packed_pixel_proxy const& other)
+                : basic_proxy(other.m_ref)
+            {
+                this->m_shift = other.m_shift;
+            }
+
+            packed_pixel_proxy& operator=(packed_pixel_proxy const& other)
+            {
+                return *this = static_cast< pixel >(other);
+            }
+
+            template< typename reference >
+            packed_pixel_proxy&
+            operator=(basic_packed_pixel_proxy< pixel, reference > const& other)
+            {
+                return *this = static_cast< pixel >(other);
+            }
+
+            packed_pixel_proxy& operator=(pixel p)
+            {
+                this->m_ref = this->m_ref
+                    & ~(pixel::get_bit_mask() << this->m_shift)
+                    | (p << this->m_shift);
+
+                return *this;
+            }
+        };
+
+    } // unnamed namespace
+
+    template< class pixel >
     class packed_pixel_row
     {
     public:
@@ -181,124 +281,36 @@ namespace png
 
         void resize(size_t size)
         {
-            m_vec.resize(size / pixels_per_byte
-                         + (size % pixels_per_byte ? 1 : 0));
+            m_vec.resize(size / get_pixels_per_byte()
+                         + (size % get_pixels_per_byte() ? 1 : 0));
             m_size = size;
         }
 
-        template< class pixel_type, typename ref_type >
-        class basic_pixel_proxy
+        typedef const_packed_pixel_proxy< pixel > const_pixel_proxy;
+        typedef packed_pixel_proxy< pixel > pixel_proxy;
+
+        const_pixel_proxy at(size_t index) const
         {
-        public:
-            explicit basic_pixel_proxy(ref_type ref)
-                : m_ref(ref),
-                  m_shift(0)
-            {
-            }
-
-            basic_pixel_proxy(ref_type ref, size_t index)
-                : m_ref(ref),
-                  m_shift(get_shift(index))
-            {
-            }
-
-            operator pixel_type() const
-            {
-                return pixel_type((m_ref >> m_shift) & pixel_type::bit_mask);
-            }
-
-        protected:
-            /*
-             * bits: . .   .
-             *    1: 7 6 5 4 3 2 1 0
-             *    2:   6   4   2   0
-             *    4:       4       0
-             */
-            static size_t get_shift(size_t index)
-            {
-                return (8 - pixel_type::bit_depth)
-                    - (index % pixels_per_byte) * pixel_type::bit_depth;
-            }
-
-            static size_t const pixels_per_byte = 8 / pixel_type::bit_depth;
-
-            ref_type m_ref;
-            size_t m_shift;
-        };
-
-        template< class pixel_type >
-        class const_pixel_proxy
-            : public basic_pixel_proxy< pixel_type, byte const& >
-        {
-        public:
-            const_pixel_proxy(byte const& ref, size_t index)
-                : basic_pixel_proxy< pixel_type, byte const& >(ref, index)
-            {
-            }
-        };
-
-        template< class pixel_type >
-        class pixel_proxy
-            : public basic_pixel_proxy< pixel_type, byte& >
-        {
-        public:
-            typedef basic_pixel_proxy< pixel_type, byte& > basic_proxy;
-            pixel_proxy(byte& ref, size_t index)
-                : basic_proxy(ref, index)
-            {
-            }
-
-            pixel_proxy(pixel_proxy const& other)
-                : basic_proxy(other.m_ref)
-            {
-                this->m_shift = other.m_shift;
-            }
-
-            pixel_proxy& operator=(pixel_proxy const& other)
-            {
-                return *this = static_cast< pixel_type >(other);
-            }
-
-            template< typename ref_type >
-            pixel_proxy& operator=(basic_pixel_proxy< pixel_type, ref_type >
-                                   const& other)
-            {
-                return *this = static_cast< pixel_type >(other);
-            }
-
-            pixel_proxy& operator=(pixel_type p)
-            {
-                this->m_ref = this->m_ref
-                    & ~(pixel_type::bit_mask << this->m_shift)
-                    | (p << this->m_shift);
-
-                return *this;
-            }
-        };
-
-        typedef const_pixel_proxy< packed_pixel_type > const_pixel_proxy_type;
-        typedef pixel_proxy< packed_pixel_type > pixel_proxy_type;
-
-        const_pixel_proxy_type at(size_t index) const
-        {
-            return const_pixel_proxy_type(m_vec.at(index / pixels_per_byte),
-                                          index);
+            return const_pixel_proxy(m_vec.at(index / get_pixels_per_byte()),
+                                     index);
         }
 
-        pixel_proxy_type at(size_t index)
+        pixel_proxy at(size_t index)
         {
-            return pixel_proxy_type(m_vec.at(index / pixels_per_byte), index);
+            return pixel_proxy(m_vec.at(index / get_pixels_per_byte()),
+                               index);
         }
 
-        const_pixel_proxy_type operator[](size_t index) const
+        const_pixel_proxy operator[](size_t index) const
         {
-            return const_pixel_proxy_type(m_vec[index / pixels_per_byte],
-                                          index);
+            return const_pixel_proxy(m_vec[index / get_pixels_per_byte()],
+                                     index);
         }
 
-        pixel_proxy_type operator[](size_t index)
+        pixel_proxy operator[](size_t index)
         {
-            return pixel_proxy_type(m_vec[index / pixels_per_byte], index);
+            return pixel_proxy(m_vec[index / get_pixels_per_byte()],
+                               index);
         }
 
         byte* get_data()
@@ -308,8 +320,11 @@ namespace png
         }
 
     private:
-        static size_t const pixels_per_byte = 8 / packed_pixel_type::bit_depth;
- 
+        static size_t get_pixels_per_byte()
+        {
+            return 8 / pixel::get_bit_depth();
+        }
+
         std::vector< byte > m_vec;
         size_t m_size;
     };

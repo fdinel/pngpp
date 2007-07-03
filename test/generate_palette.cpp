@@ -38,7 +38,7 @@ void
 generate_image(png::image< pixel >& image, char const* filename)
 {
     typedef png::pixel_traits< pixel > traits;
-    size_t colors = 1 << traits::bit_depth;
+    size_t colors = 1 << traits::get_bit_depth();
     size_t size = colors / 2; 
     image.resize(size, size);
 

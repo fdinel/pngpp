@@ -53,7 +53,7 @@ namespace png
         /**
          * \brief  Represents a row of image pixel data.
          */
-        typedef typename pixbuf::row row;
+        typedef typename pixbuf::row_type row_type;
 
         /**
          * \brief  A transformation functor to convert any image to
@@ -299,22 +299,22 @@ namespace png
             m_info.set_height(height);
         }
 
-        row& get_row(int index)
+        row_type& get_row(size_t index)
         {
             return m_pixbuf.get_row(index);
         }
         
-        row const& get_row(int index) const
+        row_type const& get_row(size_t index) const
         {
             return m_pixbuf.get_row(index);
         }
 
-        pixel get_pixel(int x, int y) const
+        pixel get_pixel(size_t x, size_t y) const
         {
             return m_pixbuf.get_pixel(x, y);
         }
 
-        void set_pixel(int x, int y, pixel p)
+        void set_pixel(size_t x, size_t y, pixel p)
         {
             m_pixbuf.set_pixel(x, y, p);
         }

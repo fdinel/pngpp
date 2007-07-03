@@ -51,7 +51,7 @@ namespace png
     {
     public:
         packed_pixel(byte value = 0)
-            : m_value(value & bit_mask)
+            : m_value(value & get_bit_mask())
         {
         }
 
@@ -60,8 +60,14 @@ namespace png
             return m_value;
         }
 
-        static size_t const bit_depth = bits;
-        static byte const bit_mask = (1 << bits) - 1;
+        static size_t const get_bit_depth()
+        {
+            return bits;
+        }
+        static byte const get_bit_mask()
+        {
+            return (1 << bits) - 1;
+        }
 
     private:
         byte m_value;

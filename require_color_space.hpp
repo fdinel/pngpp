@@ -36,6 +36,7 @@
 #include "rgba_pixel.hpp"
 #include "gray_pixel.hpp"
 #include "ga_pixel.hpp"
+#include "index_pixel.hpp"
 #include "io_base.hpp"
 
 namespace png
@@ -53,8 +54,14 @@ namespace png
         template<> char const* wrong_color_space< rgb_pixel >::error_msg =
             "RGB color space required";
 
+        template<> char const* wrong_color_space< rgb_pixel_16 >::error_msg =
+            "16-bit RGB color space required";
+
         template<> char const* wrong_color_space< rgba_pixel >::error_msg =
             "RGBA color space required";
+
+        template<> char const* wrong_color_space< rgba_pixel_16 >::error_msg =
+            "16-bit RGBA color space required";
 
         template<> char const* wrong_color_space< gray_pixel >::error_msg =
             "Grayscale color space required";
@@ -68,8 +75,26 @@ namespace png
         template<> char const* wrong_color_space< gray_pixel_4 >::error_msg =
             "4-bit Grayscale color space required";
 
+        template<> char const* wrong_color_space< gray_pixel_16 >::error_msg =
+            "16-bit Grayscale color space required";
+
         template<> char const* wrong_color_space< ga_pixel >::error_msg =
             "Gray+Alpha color space required";
+
+        template<> char const* wrong_color_space< ga_pixel_16 >::error_msg =
+            "16-bit Gray+Alpha color space required";
+
+        template<> char const* wrong_color_space< index_pixel >::error_msg =
+            "Colormap color space required";
+
+        template<> char const* wrong_color_space< index_pixel_1 >::error_msg =
+            "1-bit Colormap color space required";
+
+        template<> char const* wrong_color_space< index_pixel_2 >::error_msg =
+            "1-bit Colormap color space required";
+
+        template<> char const* wrong_color_space< index_pixel_4 >::error_msg =
+            "1-bit Colormap color space required";
 
     } // unnamed namespace
 
@@ -84,10 +109,12 @@ namespace png
     template< typename pixel >
     struct require_color_space
     {
+        typedef pixel_traits< pixel > traits;
+
         void operator()(io_base& io) const
         {
-            if (io.get_color_type() != pixel_traits< pixel >::color_space
-                || io.get_bit_depth() != pixel_traits< pixel >::bit_depth)
+            if (io.get_color_type() != traits::get_color_type()
+                || io.get_bit_depth() != traits::get_bit_depth())
             {
                 throw error(wrong_color_space< pixel >::error_msg);
             }
