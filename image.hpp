@@ -184,7 +184,7 @@ namespace png
             {
                 throw std_error(filename);
             }
-            // FIXME: stream.exceptions(std::ios::badbit | std::ios::failbit);
+            stream.exceptions(std::ios::badbit);
             read(stream, transform);
         }
 
@@ -245,7 +245,7 @@ namespace png
             {
                 throw std_error(filename);
             }
-            // FIXME: stream.exceptions(std::ios::badbit | std::ios::failbit);
+            stream.exceptions(std::ios::badbit);
             write(stream, transform);
         }
 
