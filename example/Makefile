@@ -51,6 +51,7 @@ endif
 sources := pixel_generator.cpp
 
 deps := $(sources:.cpp=.dep)
+objects := $(sources:.cpp=.o)
 targets := $(sources:.cpp=$(bin_suffix))
 
 all: $(deps) $(targets)
@@ -62,11 +63,14 @@ dist-copy-files:
 clean: clean-deps
 	rm -f $(targets)
 
-.PHONY: all dist-copy-files clean
+.PHONY: all dist-copy-files clean clean-deps
 
-%$(bin_suffix): %.cpp
-	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
-	  `$(libpng_config) --cflags --ldflags --libs`
+%$(bin_suffix): %.o
+	g++ -o $@ $< $(make_ldflags) `$(libpng_config) --ldflags --libs`
+
+%.o: %.cpp
+	g++ -c -o $@ $< $(make_cflags) `$(libpng_config) --cflags`
+
 
 %.dep: %.cpp
 	g++ -M $(CPPFLAGS) $(make_cflags) $< -o- | \

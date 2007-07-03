@@ -54,6 +54,7 @@ sources := convert_color_space.cpp \
   generate_palette.cpp
 
 deps := $(sources:.cpp=.dep)
+objects := $(sources:.cpp=.o)
 targets := $(sources:.cpp=$(bin_suffix))
 
 all: $(deps) $(targets)
@@ -67,7 +68,7 @@ dist-copy-files:
 clean: clean-targets clean-tests-output clean-deps
 
 clean-targets:
-	rm -f $(targets)
+	rm -f $(targets) $(objects)
 
 test: all \
   test-convert_color_space \
@@ -117,9 +118,11 @@ clean-tests-output:
   clean-tests-output \
   clean-deps
 
-%$(bin_suffix): %.cpp
-	g++ -o $@ $< $(make_cflags) $(make_ldflags) \
-	  `$(libpng_config) --cflags --ldflags --libs`
+%$(bin_suffix): %.o
+	g++ -o $@ $< $(make_ldflags) `$(libpng_config) --ldflags --libs`
+
+%.o: %.cpp
+	g++ -c -o $@ $< $(make_cflags) `$(libpng_config) --cflags`
 
 %.dep: %.cpp
 	g++ -M $(CPPFLAGS) $(make_cflags) $< -o- | \
