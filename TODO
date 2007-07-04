@@ -11,4 +11,5 @@
 + unify template parameters naming
 + make sure all headers compile on their own
 + add compilation dependency detection
-- add pixel_buffer/image::operator[]
++ add pixel_buffer/image::operator[]
+- improve docs and README

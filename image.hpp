@@ -309,6 +309,16 @@ namespace png
             return m_pixbuf.get_row(index);
         }
 
+        row_type& operator[](size_t index)
+        {
+            return m_pixbuf[index];
+        }
+        
+        row_type const& operator[](size_t index) const
+        {
+            return m_pixbuf[index];
+        }
+
         pixel get_pixel(size_t x, size_t y) const
         {
             return m_pixbuf.get_pixel(x, y);

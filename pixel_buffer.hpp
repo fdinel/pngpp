@@ -118,6 +118,16 @@ namespace png
             return m_rows.at(index);
         }
 
+        row_type& operator[](size_t index)
+        {
+            return m_rows[index];
+        }
+
+        row_type const& operator[](size_t index) const
+        {
+            return m_rows[index];
+        }
+
         void put_row(size_t index, row_type const& r)
         {
             m_rows.at(index) = r;
