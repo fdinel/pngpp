@@ -1,6 +1,6 @@
 You will need the libpng >= 1.2.x installed.                       -*- text -*-
 
-The installation is standard make + make install:
+The installation is standard "make; make install":
 
 	$ make
 	$ make test	# optional
@@ -11,5 +11,6 @@ You may specify PREFIX in order to install somewhere else instead of
 
 	$ make install PREFIX=$HOME
 
-will install to your home directory.  This creates directory include/png++ and
-copies all .hpp files from the package directory there.
+This will install to your home directory.  Essentially, it creates a
+directory $PREFIX/include/png++ and copies *.hpp files from the
+package directory there.

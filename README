@@ -16,9 +16,10 @@ png::image< png::rgb_pixel > my_image("myimage.png");
 my_image.write("myimage2.png");
 
 In this example png++ does all the transformations needed to create
-adequate in-memory RGB representation of the image.  Thus, myimage.png
-can be RGB image, or it might be grayscale or even indexed image with
-a palette.
+adequate in-memory RGB representation of the image (well, in most
+cases it simply instructs libpng to do so).  Thus, myimage.png can be
+RGB image, or it might be grayscale or even indexed image with a
+palette.
 
 
 Happy hacking!
