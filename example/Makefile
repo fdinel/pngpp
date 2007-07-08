@@ -44,8 +44,8 @@ make_cflags := $(make_cflags) -g
 make_ldflags := $(make_ldflags) -g
 endif
 
-ifndef libpng_config
-libpng_config := libpng-config
+ifndef LIBPNG_CONFIG
+LIBPNG_CONFIG := libpng-config
 endif
 
 sources := pixel_generator.cpp
@@ -66,10 +66,10 @@ clean: clean-deps
 .PHONY: all dist-copy-files clean clean-deps
 
 %$(bin_suffix): %.o
-	g++ -o $@ $< $(make_ldflags) `$(libpng_config) --ldflags --libs`
+	g++ -o $@ $< $(make_ldflags) `$(LIBPNG_CONFIG) --ldflags --libs`
 
 %.o: %.cpp
-	g++ -c -o $@ $< $(make_cflags) `$(libpng_config) --cflags`
+	g++ -c -o $@ $< $(make_cflags) `$(LIBPNG_CONFIG) --cflags`
 
 
 %.dep: %.cpp
