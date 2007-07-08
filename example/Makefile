@@ -61,7 +61,7 @@ dist-copy-files:
 	cp $(sources) Makefile $(dist_dir)/example
 
 clean: clean-deps
-	rm -f $(targets)
+	rm -f $(targets) $(objects)
 
 .PHONY: all dist-copy-files clean clean-deps
 

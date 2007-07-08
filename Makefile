@@ -87,10 +87,10 @@ dist-package:
 	tar -zcf $(dist_package) $(dist_dir) --exclude=.svn --exclude='*~'
 	rm -rf $(dist_dir)
 
-clean: test-clean
+clean: test-clean examples-clean
 #	rm -f $(targets)
 
-thorough-clean: clean test-clean
+thorough-clean: clean docs-clean
 
 check: test
 
@@ -110,8 +110,11 @@ test-compile-headers: *.hpp
 docs:
 	doxygen
 
+docs-clean:
+	rm -rf doc
+
 install-docs:
-	if [ -d ./doc ]; then \
+	if [ -d doc ]; then \
 		dir=$(PREFIX)/share/doc/$(dist_dir); \
 		rm -rf $$dir; \
 		mkdir -p $$dir \
@@ -124,8 +127,12 @@ install-docs:
 examples:
 	$(MAKE) -C example $(MAKEFLAGS)
 
+examples-clean:
+	$(MAKE) clean -C example $(MAKEFLAGS)
+
 .PHONY: all install \
   dist dist-mkdir dist-copy-files dist-package \
   clean thorough-clean \
   check test test-clean test-compile-headers \
-  docs examples
+  docs docs-clean \
+  examples examples-clean
