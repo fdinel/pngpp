@@ -46,12 +46,12 @@ make_cflags := $(make_cflags) -g
 make_ldflags := $(make_ldflags) -g
 endif
 
-ifndef libpng_config
-libpng_config := libpng-config
+ifndef LIBPNG_CONFIG
+LIBPNG_CONFIG := libpng-config
 endif
 
-build_files := Makefile
-doc_files := AUTHORS COPYING INSTALL README TODO
+build_files := Makefile Doxyfile
+doc_files := AUTHORS BUGS ChangeLog COPYING INSTALL NEWS README TODO
 headers := *.hpp
 sources :=
 
@@ -103,7 +103,7 @@ test-clean:
 test-compile-headers: *.hpp
 	for i in *.hpp; do \
 		echo '#include "'$$i'"' >$$i.cpp \
-		&& g++ -c $$i.cpp $(make_cflags) `$(libpng_config) --cflags`; \
+		&& g++ -c $$i.cpp $(make_cflags) `$(LIBPNG_CONFIG) --cflags`; \
 	done
 	rm -f *.hpp.o *.hpp.cpp
 
