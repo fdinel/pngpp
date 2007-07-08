@@ -123,6 +123,8 @@
  * - png++ works with libpng-1.2.x.
  * - png++ compiles with g++-4.1.  Other version should work well too,
  *   but I have not tested.
+ * - png++ relies on GNU make for compiling tests and examples; in
+ *   particular it uses "remaking makefiles" feature
  * - Documentation is produced using <a
  *   href="http://www.doxygen.org/">doxygen</a>.  This one is compiled
  *   with doxygen-1.5.2.
@@ -139,9 +141,9 @@
  * \verbatim $ make \endverbatim
  * This will compile examples in the \c example directory.  If everything
  * goes well, try \verbatim $ make test \endverbatim (or \c make \c
- * check which is the same as above) to run the test suite.
- * -# If tests do not produce error messages then probably all is OK.
- * Now you can create documentation (optional).  Use
+ * check which is the same as above) to run the test suite.  If tests
+ * do not produce error messages then probably all is OK.
+ * -# Now you can create documentation (optional).  Use
  * \verbatim $ make docs \endverbatim
  * to run \c doxygen in the sources directory.
  * -# Now it is time to become \c root and install png++ into your
@@ -261,6 +263,10 @@
  * http://lists.nongnu.org/mailman/listinfo/pngpp-devel
  *
  * You can also contact me by dropping a mail to <alex.shulgin@gmail.com>.
+ *
+ * Happy hacking!
+ *
+ * Alex Shulgin
  */
 
 #endif // PNGPP_PNG_HPP_INCLUDED
