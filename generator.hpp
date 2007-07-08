@@ -40,6 +40,69 @@
 namespace png
 {
 
+    /**
+     * \brief Pixel generator class template.
+     *
+     * Used as a base class for custom pixel generator classes as well
+     * as inside image class implementation to write pixels from the
+     * pixel buffer.
+     *
+     * A usage example can be found in \c example/pixel_generator.cpp.
+     *
+     * Encapsulates PNG image writing procedure.  In order to create
+     * custom pixel generator, use CRTP trick:
+     *
+     * \code
+     * class pixel_generator
+     *     : public png::generator< pixel, pixel_generator >
+     * {
+     *     ...
+     * };
+     * \endcode
+     *
+     * Your pixel generator class should implement \c get_next_row()
+     * method and \c reset() method (optional).  Their signatures are
+     * as follows:
+     *
+     * \code
+     * png::byte* get_next_row(size_t pos);
+     * void reset(size_t pass);
+     * \endcode
+     *
+     * The \c get_next_row() method is called every time a new row of
+     * image data is needed by the writer.  The position of the row
+     * being written is passed as \c pos parameter.  The \c pos takes
+     * values from \c 0 to \c <image_height>-1 inclusively.  The
+     * method should return the starting address of a row buffer
+     * storing an appropriate amount of pixels (i.e. the width of the
+     * image being written).  The address should be casted to
+     * png::byte* pointer type using \c reinterpret_cast<> or a
+     * C-style cast.
+     *
+     * The optional \c reset() method is called every time the new
+     * pass of interlaced image processing starts.  The number of
+     * interlace pass is avaiable as the only parameter of the method.
+     * For non-interlaced images the method is called once prior to
+     * any calls to \c get_next_row().  The value of \c 0 is passed
+     * for the \c pass number.  You do not have to implement this
+     * method unless you are going to support interlaced image
+     * generation.
+     *
+     * An optional template parameter \c info_holder encapsulated
+     * image_info storage policy.  Please refer to consumer class
+     * documentation for the detailed description of this parameter.
+     *
+     * An optional \c bool template parameter \c interlacing_supported
+     * specifies whether writing interlacing images is supported by
+     * your generator class.  It defaults to \c false.  An attempt to
+     * write an interlaced image will result in throwing
+     * std::logic_error.
+     *
+     * In order to fully support interlacing specify \c true for \c
+     * interlacing_supported parameter and implement \c reset()
+     * method.  You _must_ generate the same pixels for every pass to
+     * get the correct PNG image output.
+     */
     template< typename pixel,
               class pixgen,
               class info_holder = def_image_info_holder,
@@ -48,6 +111,14 @@ namespace png
         : public streaming_base< pixel, info_holder >
     {
     public:
+        /**
+         * \brief Writes an image to the stream.
+         *
+         * Essentially, this method constructs a writer object and
+         * instructs it to write the image to the stream.  It handles
+         * writing interlaced images as long as your generator class
+         * supports this.
+         */
         void write(std::ostream& stream)
         {
             writer wr(stream);
@@ -93,11 +164,19 @@ namespace png
     protected:
         typedef streaming_base< pixel, info_holder > base;
 
+        /**
+         * \brief Constructs a generator object using passed image_info
+         * object to store image information.
+         */
         explicit generator(image_info& info)
             : base(info)
         {
         }
 
+        /**
+         * \brief Constructs a generator object prepared to generate
+         * an image of specified width and height.
+         */
         generator(size_t width, size_t height)
             : base(width, height)
         {

@@ -38,18 +38,21 @@ namespace png
 {
 
     /**
-     * \brief  Pixel traits class template.
+     * \brief Pixel traits class template.
      *
      * Provides information about pixel color type and components bit depth.
      * Not implemented -- see specializations.
      *
      * \see  pixel_traits<rgb_pixel>, pixel_traits<rgba_pixel>
      */
-    template< typename pixel >
-    struct pixel_traits
-    {
-    };
+    template< typename pixel > struct pixel_traits;
 
+    /**
+     * \brief Basic pixel traits class template.
+     *
+     * Provides common implementation for various pixel_traits<>
+     * specializations.
+     */
     template< typename pixel,
               typename component,
               color_type pixel_color_type,
@@ -74,9 +77,17 @@ namespace png
         }
     };
 
+    /**
+     * \brief Basic pixel traits class template for pixels with alpha
+     * channel.
+     */
     template< typename component >
     struct basic_alpha_pixel_traits
     {
+        /**
+         * \brief Returns the default alpha channel filler for full
+         * opacity.
+         */
         static component get_alpha_filler()
         {
             return std::numeric_limits< component >::max();

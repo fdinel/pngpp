@@ -37,6 +37,10 @@
 namespace png
 {
 
+    /**
+     * \brief The palette type.  Currently implemented as \c std::vector
+     * of png::color.
+     */
     typedef std::vector< color > palette;
 
 } // namespace png

@@ -39,8 +39,8 @@ namespace png
 {
 
     /**
-     * \brief  Exception class to represent runtime errors related to png++
-     * operation.
+     * \brief Exception class to represent runtime errors related to
+     * png++ operation.
      */
     class error
         : public std::runtime_error
@@ -56,8 +56,8 @@ namespace png
     };
 
     /**
-     * \brief Exception class to represent standard library errors (generally
-     * IO).
+     * \brief Exception class to represent standard library errors
+     * (generally IO).
      *
      * \see  reader, writer
      */
@@ -66,9 +66,9 @@ namespace png
     {
     public:
         /**
-         * Constructs an std_error object.  The \a message string is appended
-         * with <tt>": "</tt> and the error description as returned by \c
-         * std::strerror(\a error).
+         * Constructs an std_error object.  The \a message string is
+         * appended with <tt>": "</tt> and the error description as
+         * returned by \c std::strerror(\a error).
          *
          * \param  message  error description
          * \param  error    error number

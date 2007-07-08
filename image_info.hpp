@@ -38,9 +38,19 @@
 namespace png
 {
 
+    /**
+     * \brief Holds information about PNG image.
+     *
+     * \see image, generator, consumer
+     */
     class image_info
     {
     public:
+        /**
+         * \brief Constructs the image_info object with default values
+         * for color_type, interlace_type, compression_method and
+         * filter_type.
+         */
         image_info()
             : m_width(0),
               m_height(0),
@@ -137,6 +147,9 @@ namespace png
             m_palette = plte;
         }
 
+        /**
+         * \brief Removes all entries from the palette.
+         */
         void drop_palette()
         {
             m_palette.clear();
@@ -153,40 +166,10 @@ namespace png
         palette m_palette;
     };
 
-    class def_image_info_holder
-    {
-    public:
-        def_image_info_holder(image_info const& info)
-            : m_info(info)
-        {
-        }
-
-        image_info& get_info()
-        {
-            return m_info;
-        }
-
-    private:
-        image_info m_info;
-    };
-
-    class image_info_ref_holder
-    {
-    public:
-        image_info_ref_holder(image_info& info)
-            : m_info(info)
-        {
-        }
-
-        image_info& get_info()
-        {
-            return m_info;
-        }
-
-    private:
-        image_info& m_info;
-    };
-
+    /**
+     * \brief Returns an image_info object with color_type and
+     * bit_depth fields setup appropriate for the \c pixel type.
+     */
     template< typename pixel >
     image_info
     make_image_info()

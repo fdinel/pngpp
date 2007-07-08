@@ -40,7 +40,7 @@ namespace png
 {
 
     /**
-     * \brief  Gray+Alpha pixel type.
+     * \brief Basic Gray+Alpha pixel type.
      */
     template< typename T >
     struct basic_ga_pixel
@@ -48,7 +48,7 @@ namespace png
         typedef pixel_traits< basic_ga_pixel< T > > traits;
 
         /**
-         * \brief  Constructs basic_ga_pixel object from \a value and
+         * \brief Constructs basic_ga_pixel object from \a value and
          * \a alpha components passed as parameters.  Alpha defaults
          * to full opacity.
          */
@@ -61,11 +61,18 @@ namespace png
         T alpha;
     };
 
+    /**
+     * \brief The 8-bit Gray+Alpha pixel type.
+     */
     typedef basic_ga_pixel< byte > ga_pixel;
+
+    /**
+     * \brief The 16-bit Gray+Alpha pixel type.
+     */
     typedef basic_ga_pixel< uint_16 > ga_pixel_16;
 
     /**
-     * \brief  Pixel traits specialization for basic_ga_pixel.
+     * \brief Pixel traits specialization for basic_ga_pixel.
      */
     template< typename T >
     struct pixel_traits< basic_ga_pixel< T > >

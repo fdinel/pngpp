@@ -39,7 +39,8 @@ namespace png
 {
 
     /**
-     * \brief  Holds information about PNG image.
+     * \brief Holds information about PNG image.  Adapter class for IO
+     * image operations.
      */
     class info
         : public info_base,

@@ -39,24 +39,25 @@ namespace png
 {
 
     /**
-     * \brief  PNG reader class.
+     * \brief The PNG reader class.  This is the low-level reading
+     * interface -- use image class or consumer class to actually read
+     * images.
      *
-     * \see  image, writer, io_base
+     * \see image, consumer, writer, io_base
      */
     class reader
         : public io_base
     {
     public:
         /**
-         * \brief  Constructs a reader prepared to read PNG image from
+         * \brief Constructs a reader prepared to read PNG image from
          * a \a stream.
          */
         explicit reader(std::istream& stream)
             : io_base(png_create_read_struct(PNG_LIBPNG_VER_STRING,
                                              static_cast< io_base* >(this),
                                              raise_error,
-                                             0)),
-              m_pass_count(0)
+                                             0))
         {
             png_set_read_fn(m_png, & stream, read_data);
         }
@@ -69,7 +70,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads the whole PNG data stream into memory.  Not
+         * \brief Reads the whole PNG data stream into memory.  Not
          * particularly useful.
          */
         void read_png()
@@ -85,7 +86,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads info about PNG image.
+         * \brief Reads info about PNG image.
          */
         void read_info()
         {
@@ -96,6 +97,9 @@ namespace png
             m_info.read();
         }
 
+        /**
+         * \brief Reads a row of image data at a time.
+         */
         void read_row(byte* bytes)
         {
             if (setjmp(m_png->jmpbuf))
@@ -106,7 +110,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads endinig info about PNG image.
+         * \brief Reads endinig info about PNG image.
          */
         void read_end_info()
         {
@@ -120,13 +124,6 @@ namespace png
         void update_info()
         {
             m_info.update();
-        }
-
-    protected:
-        size_t m_pass_count;
-
-        void setup_pass_count()
-        {
         }
 
     private:

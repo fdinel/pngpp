@@ -38,6 +38,9 @@
 namespace png
 {
 
+    /**
+     * \brief The 8-bit Indexed (colormap) pixel type.
+     */
     class index_pixel
     {
     public:
@@ -55,6 +58,10 @@ namespace png
         byte m_index;
     };
 
+    /**
+     * \brief The packed indexed pixel class template.  The available
+     * specializations are for 1-, 2- and 4-bit pixels.
+     */
     template< size_t bits >
     class packed_index_pixel
         : public packed_pixel< bits >
@@ -66,12 +73,23 @@ namespace png
         }
     };
 
+    /**
+     * \brief The 1-bit Indexed pixel type.
+     */
     typedef packed_index_pixel< 1 > index_pixel_1;
+
+    /**
+     * \brief The 1-bit Indexed pixel type.
+     */
     typedef packed_index_pixel< 2 > index_pixel_2;
+
+    /**
+     * \brief The 1-bit Indexed pixel type.
+     */
     typedef packed_index_pixel< 4 > index_pixel_4;
 
     /**
-     * \brief  Pixel traits specialization for index_pixel.
+     * \brief Pixel traits specialization for index_pixel.
      */
     template<>
     struct pixel_traits< index_pixel >
@@ -80,7 +98,7 @@ namespace png
     };
 
     /**
-     * \brief  Pixel traits specialization for packed_index_pixel.
+     * \brief Pixel traits specialization for packed_index_pixel.
      */
     template< size_t bits >
     struct pixel_traits< packed_index_pixel< bits > >

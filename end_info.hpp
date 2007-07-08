@@ -37,9 +37,9 @@ namespace png
 {
 
     /**
-     * \brief  Internal class to hold PNG end info.
+     * \brief Internal class to hold PNG ending info.
      *
-     * \see  info, info_base
+     * \see info, info_base
      */
     class end_info
         : public info_base

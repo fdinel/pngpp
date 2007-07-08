@@ -41,28 +41,40 @@ namespace png
 {
 
     /**
-     * \brief  Class template to represent PNG image.
+     * \brief Class template to represent PNG image.
+     *
+     * The image consists of pixel data as well as additional image
+     * info like interlace type, compression method, palette (for
+     * colormap-based images) etc.  Provides methods to read and write
+     * images from/to a generic stream and to manipulate image pixels.
      */
     template< typename pixel >
     class image
     {
     public:
+        /**
+         * \brief The pixel traits type for \c pixel.
+         */
         typedef pixel_traits< pixel > traits;
+
+        /**
+         * \brief The pixel buffer type for \c pixel.
+         */
         typedef pixel_buffer< pixel > pixbuf;
 
         /**
-         * \brief  Represents a row of image pixel data.
+         * \brief Represents a row of image pixel data.
          */
         typedef typename pixbuf::row_type row_type;
 
         /**
-         * \brief  A transformation functor to convert any image to
+         * \brief A transformation functor to convert any image to
          * appropriate color space.
          */
         typedef convert_color_space< pixel > transform_convert;
 
         /**
-         * \brief  A default output transformation: does nothing.
+         * \brief The default io transformation: does nothing.
          */
         struct transform_identity
         {
@@ -70,7 +82,7 @@ namespace png
         };
 
         /**
-         * \brief  Constructs an empty image.
+         * \brief Constructs an empty image.
          */
         image()
             : m_info(make_image_info< pixel >())
@@ -78,7 +90,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an empty image of specified width and height.
+         * \brief Constructs an empty image of specified width and height.
          */
         image(size_t width, size_t height)
             : m_info(make_image_info< pixel >())
@@ -87,7 +99,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from specified file
+         * \brief Constructs an image reading data from specified file
          * using default converting transform.
          */
         explicit image(std::string const& filename)
@@ -96,7 +108,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from specified file
+         * \brief Constructs an image reading data from specified file
          * using custom transformaton.
          */
         template< class transformation >
@@ -107,7 +119,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from specified file
+         * \brief Constructs an image reading data from specified file
          * using default converting transform.
          */
         explicit image(char const* filename)
@@ -116,7 +128,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from specified file
+         * \brief Constructs an image reading data from specified file
          * using custom transformaton.
          */
         template< class transformation >
@@ -126,7 +138,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from a stream using
+         * \brief Constructs an image reading data from a stream using
          * default converting transform.
          */
         explicit image(std::istream& stream)
@@ -135,7 +147,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an image reading data from a stream using
+         * \brief Constructs an image reading data from a stream using
          * custom transformation.
          */
         template< class transformation >
@@ -145,7 +157,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from specified file using default
+         * \brief Reads an image from specified file using default
          * converting transform.
          */
         void read(std::string const& filename)
@@ -154,7 +166,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from specified file using custom
+         * \brief Reads an image from specified file using custom
          * transformaton.
          */
         template< class transformation >
@@ -164,7 +176,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from specified file using default
+         * \brief Reads an image from specified file using default
          * converting transform.
          */
         void read(char const* filename)
@@ -173,7 +185,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from specified file using custom
+         * \brief Reads an image from specified file using custom
          * transformaton.
          */
         template< class transformation >
@@ -189,7 +201,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from a stream using default
+         * \brief Reads an image from a stream using default
          * converting transform.
          */
         void read(std::istream& stream)
@@ -198,7 +210,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads an image from a stream using custom
+         * \brief Reads an image from a stream using custom
          * transformation.
          */
         template< class transformation >
@@ -209,36 +221,17 @@ namespace png
         }
 
         /**
-         * \brief  Writes an image to specified file.
+         * \brief Writes an image to specified file.
          */
         void write(std::string const& filename)
         {
-            write(filename, transform_identity());
+            write(filename.c_str());
         }
 
         /**
-         * \brief  Writes an image to specified file.
-         */
-        template< class transformation >
-        void write(std::string const& filename,
-                   transformation const& transform)
-        {
-            write(filename.c_str(), transform);
-        }
-
-        /**
-         * \brief  Writes an image to specified file.
+         * \brief Writes an image to specified file.
          */
         void write(char const* filename)
-        {
-            write(filename, transform_identity());
-        }
-
-        /**
-         * \brief  Writes an image to specified file.
-         */
-        template< class transformation >
-        void write(char const* filename, transformation const& transform)
         {
             std::ofstream stream(filename, std::ios::binary);
             if (!stream.is_open())
@@ -246,37 +239,39 @@ namespace png
                 throw std_error(filename);
             }
             stream.exceptions(std::ios::badbit);
-            write(stream, transform);
+            write(stream);
         }
 
         /**
-         * \brief  Writes an image to a stream.
+         * \brief Writes an image to a stream.
          */
         void write(std::ostream& stream)
-        {
-            write(stream, transform_identity());
-        }
-
-        /**
-         * \brief  Writes an image to a stream.
-         */
-        template< class transformation >
-        void write(std::ostream& stream, transformation const& transform)
         {
             pixel_generator pixgen(m_info, m_pixbuf);
             pixgen.write(stream);
         }
 
+        /**
+         * \brief Returns a reference to image pixel buffer.
+         */
         pixbuf& get_pixbuf()
         {
             return m_pixbuf;
         }
         
+        /**
+         * \brief Returns a const reference to image pixel buffer.
+         */
         pixbuf const& get_pixbuf() const
         {
             return m_pixbuf;
         }
 
+        /**
+         * \brief Replaces the image pixel buffer.
+         *
+         * \param buffer  a pixel buffer object to take a copy from
+         */
         void set_pixbuf(pixbuf const& buffer)
         {
             m_pixbuf = buffer;
@@ -292,6 +287,9 @@ namespace png
             return m_pixbuf.get_height();
         }
 
+        /**
+         * \brief Resizes the image pixel buffer.
+         */
         void resize(size_t width, size_t height)
         {
             m_pixbuf.resize(width, height);
@@ -299,31 +297,55 @@ namespace png
             m_info.set_height(height);
         }
 
+        /**
+         * \brief Returns a reference to the row of image data at
+         * specified index.
+         *
+         * \see pixel_buffer::get_row()
+         */
         row_type& get_row(size_t index)
         {
             return m_pixbuf.get_row(index);
         }
         
+        /**
+         * \brief Returns a const reference to the row of image data at
+         * specified index.
+         *
+         * \see pixel_buffer::get_row()
+         */
         row_type const& get_row(size_t index) const
         {
             return m_pixbuf.get_row(index);
         }
 
+        /**
+         * \brief The non-checking version of get_row() method.
+         */
         row_type& operator[](size_t index)
         {
             return m_pixbuf[index];
         }
         
+        /**
+         * \brief The non-checking version of get_row() method.
+         */
         row_type const& operator[](size_t index) const
         {
             return m_pixbuf[index];
         }
 
+        /**
+         * \brief Returns a pixel at (x,y) position.
+         */
         pixel get_pixel(size_t x, size_t y) const
         {
             return m_pixbuf.get_pixel(x, y);
         }
 
+        /**
+         * \brief Replaces a pixel at (x,y) position.
+         */
         void set_pixel(size_t x, size_t y, pixel p)
         {
             m_pixbuf.set_pixel(x, y, p);
@@ -359,22 +381,35 @@ namespace png
             m_info.set_filter_type(filter);
         }
 
-        palette const& get_palette() const
-        {
-            return m_info.get_palette();
-        }
-
+        /**
+         * \brief Returns a reference to the image palette.
+         */
         palette& get_palette()
         {
             return m_info.get_palette();
         }
 
+        /**
+         * \brief Returns a const reference to the image palette.
+         */
+        palette const& get_palette() const
+        {
+            return m_info.get_palette();
+        }
+
+        /**
+         * \brief Replaces the image palette.
+         */
         void set_palette(palette const& plte)
         {
             m_info.set_palette(plte);
         }
 
     protected:
+        /**
+         * \brief A common base class tempate for pixel_consumer and
+         * pixel_generator classes.
+         */
         template< typename base >
         class streaming_impl
             : public base
@@ -386,6 +421,10 @@ namespace png
             {
             }
 
+            /**
+             * \brief Returns the starting address of a \c pos-th row
+             * in the image's pixel buffer.
+             */
             byte* get_next_row(size_t pos)
             {
                 typedef typename pixbuf::row_traits row_traits;
@@ -397,6 +436,9 @@ namespace png
             pixbuf& m_pixbuf;
         };
 
+        /**
+         * \brief The pixel buffer adapter for reading pixel data.
+         */
         class pixel_consumer
             : public streaming_impl< consumer< pixel, pixel_consumer,
                                                image_info_ref_holder,
@@ -420,6 +462,9 @@ namespace png
             }
         };
 
+        /**
+         * \brief The pixel buffer adapter for writing pixel data.
+         */
         class pixel_generator
             : public streaming_impl< generator< pixel, pixel_generator,
                                                 image_info_ref_holder,

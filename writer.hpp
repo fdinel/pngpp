@@ -39,16 +39,18 @@ namespace png
 {
 
     /**
-     * \brief  PNG writer class.
+     * \brief PNG writer class.  This is the low-level writing
+     * interface -- use image class or generator class to actually
+     * write images.
      *
-     * \see  image, writer, io_base
+     * \see image, reader, generator, io_base
      */
     class writer
         : public io_base
     {
     public:
         /**
-         * \brief  Constructs a writer prepared to write PNG image into
+         * \brief Constructs a writer prepared to write PNG image into
          * a \a stream.
          */
         explicit writer(std::ostream& stream)
@@ -79,7 +81,7 @@ namespace png
         }
 
         /**
-         * \brief  Write info about PNG image.
+         * \brief Write info about PNG image.
          */
         void write_info() const
         {
@@ -90,6 +92,9 @@ namespace png
             m_info.write();
         }
 
+        /**
+         * \brief Writes a row of image data at a time.
+         */
         void write_row(byte* bytes)
         {
             if (setjmp(m_png->jmpbuf))
@@ -100,7 +105,7 @@ namespace png
         }
 
         /**
-         * \brief  Reads ending info about PNG image.
+         * \brief Reads ending info about PNG image.
          */
         void write_end_info() const
         {

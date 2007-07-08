@@ -38,9 +38,20 @@
 namespace png
 {
 
+    /**
+     * \brief The 8-bit Grayscale pixel type.
+     */
     typedef byte gray_pixel;
+
+    /**
+     * \brief The 16-bit Grayscale pixel type.
+     */
     typedef uint_16 gray_pixel_16;
 
+    /**
+     * \brief The packed gray pixel class template.  The available
+     * specializations are for 1-, 2- and 4-bit pixels.
+     */
     template< size_t bits >
     class packed_gray_pixel
         : public packed_pixel< bits >
@@ -52,12 +63,23 @@ namespace png
         }
     };
 
+    /**
+     * \brief The 1-bit Grayscale pixel type.
+     */
     typedef packed_gray_pixel< 1 > gray_pixel_1;
+
+    /**
+     * \brief The 2-bit Grayscale pixel type.
+     */
     typedef packed_gray_pixel< 2 > gray_pixel_2;
+
+    /**
+     * \brief The 4-bit Grayscale pixel type.
+     */
     typedef packed_gray_pixel< 4 > gray_pixel_4;
 
     /**
-     * \brief  Pixel traits specialization for gray_pixel.
+     * \brief Pixel traits specialization for gray_pixel.
      */
     template<>
     struct pixel_traits< gray_pixel >
@@ -66,7 +88,7 @@ namespace png
     };
 
     /**
-     * \brief  Pixel traits specialization for gray_pixel_16.
+     * \brief Pixel traits specialization for gray_pixel_16.
      */
     template<>
     struct pixel_traits< gray_pixel_16 >
@@ -75,7 +97,7 @@ namespace png
     };
 
     /**
-     * \brief  Pixel traits specialization for packed_gray_pixel.
+     * \brief Pixel traits specialization for packed_gray_pixel.
      */
     template< size_t bits >
     struct pixel_traits< packed_gray_pixel< bits > >

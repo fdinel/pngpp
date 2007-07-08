@@ -99,12 +99,12 @@ namespace png
     } // unnamed namespace
 
     /**
-     * \brief  IO transformation class template.  Enforces image color space.
+     * \brief IO transformation class template.  Enforces image color space.
      *
      * This IO transformation class template used to enforce source image
      * color space.
      *
-     * \see  image, image::read
+     * \see image, image::read
      */
     template< typename pixel >
     struct require_color_space

@@ -45,6 +45,11 @@ namespace png
         template<> class allowed_bit_depth< 4 > {};
     }
 
+    /**
+     * \brief The packed pixel class template.
+     *
+     * \see packed_gray_pixel, packed_index_pixel
+     */
     template< size_t bits >
     class packed_pixel
         : allowed_bit_depth< bits >
@@ -64,6 +69,7 @@ namespace png
         {
             return bits;
         }
+
         static byte const get_bit_mask()
         {
             return (1 << bits) - 1;

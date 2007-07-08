@@ -38,7 +38,7 @@ namespace png
 {
 
     /**
-     * \brief  RGBA pixel type.
+     * \brief RGBA pixel type.
      */
     template< typename T >
     struct basic_rgba_pixel
@@ -46,7 +46,7 @@ namespace png
         typedef pixel_traits< basic_rgba_pixel< T > > traits;
 
         /**
-         * \brief  Default constructor.  Initializes all components
+         * \brief Default constructor.  Initializes all components
          * with zeros.
          */
         basic_rgba_pixel()
@@ -55,7 +55,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs rgba_pixel object from \a red, \a green,
+         * \brief Constructs rgba_pixel object from \a red, \a green,
          * \a blue and \a alpha components passed as parameters.
          * Alpha defaults to full opacity.
          */
@@ -71,11 +71,18 @@ namespace png
         T alpha;
     };
 
+    /**
+     * The 8-bit RGBA pixel type.
+     */
     typedef basic_rgba_pixel< byte > rgba_pixel;
+
+    /**
+     * The 16-bit RGBA pixel type.
+     */
     typedef basic_rgba_pixel< uint_16 > rgba_pixel_16;
 
     /**
-     * \brief  Pixel traits specialization for basic_rgba_pixel.
+     * \brief Pixel traits specialization for basic_rgba_pixel.
      */
     template< typename T >
     struct pixel_traits< basic_rgba_pixel< T > >

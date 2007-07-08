@@ -41,6 +41,77 @@
 namespace png
 {
 
+    /**
+     * \brief Pixel consumer class template.
+     *
+     * Used as a base class for custom pixel consumer classes as well
+     * as inside image class implementation to read pixels into the
+     * pixel buffer.
+     *
+     * Encapsulates PNG image reading procedure.  In order to create
+     * custom pixel consumer, use CRTP trick:
+     *
+     * \code
+     * class pixel_consumer
+     *     : public png::consumer< pixel, pixel_consumer >
+     * {
+     *     ...
+     * };
+     * \endcode
+     *
+     * Your pixel consumer class should implement \c get_next_row()
+     * method and \c reset() method (optional).  Their signatures are
+     * as follows:
+     *
+     * \code
+     * png::byte* get_next_row(size_t pos);
+     * void reset(size_t pass);
+     * \endcode
+     *
+     * The \c get_next_row() method is called every time a new row of
+     * image data is available to the reader.  The position of the row
+     * being read is passed as \c pos parameter.  The \c pos takes
+     * values from \c 0 to \c <image_height>-1 inclusively.  The
+     * method should return the starting address of a row buffer
+     * capable of storing appropriate amount of pixels (i.e. the width
+     * of the image being read).  The address should be casted to
+     * png::byte* pointer type using \c reinterpret_cast<> or a
+     * C-style cast.
+     *
+     * The optional \c reset() method is called every time the new
+     * pass of interlaced image processing starts.  The number of
+     * interlace pass is avaiable as the only parameter of the method.
+     * For non-interlaced images the method is called once prior to
+     * any calls to \c get_next_row().  The value of \c 0 is passed
+     * for the \c pass number.
+     *
+     * An optional template parameter \c info_holder encapsulated
+     * image_info storage policy.  Using def_image_info_holder results
+     * in image_info object stored as a sub-object of the consumer
+     * class.  You may specify image_info_ref_holder in order to use a
+     * reference to the externally stored image_info object.  This way
+     * you will have to construct the consumer object passing the
+     * reference to image_info object.
+     *
+     * Also, you might want implement an info holder object yourself
+     * to fine-tune your code.  In any case, you can access the
+     * image_info object from your consumer class methods using the
+     * following code:
+     *
+     * \code
+     * png::image_info& info = m_info_holder.get_info();
+     * \endcode
+     *
+     * An optional \c bool template parameter \c interlacing_supported
+     * specifies whether reading interlacing images is supported by
+     * your consumer class.  It defaults to \c false.  An attempt to
+     * read an interlaced image will result in discarding pixels
+     * obtained at all the interlacing passes except the last one.
+     *
+     * In order to fully support interlacing specify \c true for \c
+     * interlacing_supported parameter and implement \c reset()
+     * method.
+     */
     template< typename pixel,
               class pixcon,
               class info_holder = def_image_info_holder,
@@ -51,6 +122,31 @@ namespace png
     public:
         typedef pixel_traits< pixel > traits;
 
+        /**
+         * \brief The default io transformation: does nothing.
+         */
+        struct transform_identity
+        {
+            void operator()(io_base&) const {}
+        };
+
+        /**
+         * \brief Reads an image from the stream using default io
+         * transformation.
+         */
+        void read(std::istream& stream)
+        {
+            read(stream, transform_identity());
+        }
+
+        /**
+         * \brief Reads an image from the stream using custom io
+         * transformation.
+         *
+         * Essentially, this method constructs a reader object and
+         * instructs it to read the image from the stream.  It handles
+         * IO transformation as well as interlaced image reading.
+         */
         template< class transformation >
         void read(std::istream& stream, transformation const& transform)
         {
@@ -98,13 +194,12 @@ namespace png
     protected:
         typedef streaming_base< pixel, info_holder > base;
 
+        /**
+         * \brief Constructs a consumer object using passed image_info
+         * object to store image information.
+         */
         explicit consumer(image_info& info)
             : base(info)
-        {
-        }
-
-        consumer(size_t width, size_t height)
-            : base(width, height)
         {
         }
 

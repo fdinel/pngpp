@@ -36,6 +36,9 @@
 namespace png
 {
 
+    /**
+     * \brief PNG color struct extension.  Adds constructors. 
+     */
     struct color
         : png_color
     {
@@ -46,6 +49,9 @@ namespace png
             this->blue = b;
         }
 
+        /**
+         * \brief Initializes color with a copy of png_color object.
+         */
         color(png_color const& other)
         {
             this->red = other.red;

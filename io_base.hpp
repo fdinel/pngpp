@@ -41,7 +41,7 @@ namespace png
 {
 
     /**
-     * \brief  Base class for PNG reader/writer classes.
+     * \brief Base class for PNG reader/writer classes.
      *
      * \see  reader, writer
      */

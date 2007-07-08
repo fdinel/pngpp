@@ -43,10 +43,17 @@
 namespace png
 {
 
+    /**
+     * \brief The pixel row traits class template.  Provides a common
+     * way to get starting address of the row for packed and unpacked
+     * row types.
+     *
+     * Not implemented -- see specializations.
+     */
     template< typename row > class row_traits;
 
     /**
-     * \brief  Class template which represents image pixel data.
+     * \brief The basic class template to represent image pixel data.
      */
     template< typename pixel,
               typename row,
@@ -55,13 +62,13 @@ namespace png
     {
     public:
         /**
-         * \brief  A row of pixel data.
+         * \brief A row of pixel data.
          */
         typedef row row_type;
         typedef traits row_traits;
 
         /**
-         * \brief  Constructs an empty 0x0 pixel buffer object.
+         * \brief Constructs an empty 0x0 pixel buffer object.
          */
         basic_pixel_buffer()
             : m_width(0),
@@ -70,7 +77,7 @@ namespace png
         }
 
         /**
-         * \brief  Constructs an empty pixel buffer object.
+         * \brief Constructs an empty pixel buffer object.
          */
         basic_pixel_buffer(size_t width, size_t height)
             : m_width(0),
@@ -90,7 +97,7 @@ namespace png
 	    }
 
         /**
-         * \brief  Resizes the pixel buffer.
+         * \brief Resizes the pixel buffer.
          *
          * If new width or height is greater than the original,
          * expanded pixels are filled with value of \a pixel().
@@ -108,36 +115,66 @@ namespace png
             }
         }
 
+        /**
+         * \brief Returns a reference to the row of image data at
+         * specified index.
+         *
+         * Checks the index before returning a row: an instance of
+         * std::out_of_range is thrown if \c index is greater than \c
+         * height.
+         */
         row_type& get_row(size_t index)
         {
             return m_rows.at(index);
         }
 
+        /**
+         * \brief Returns a const reference to the row of image data at
+         * specified index.
+         *
+         * The checking version.
+         */
         row_type const& get_row(size_t index) const
         {
             return m_rows.at(index);
         }
 
+        /**
+         * \brief The non-checking version of get_row() method.
+         */
         row_type& operator[](size_t index)
         {
             return m_rows[index];
         }
 
+        /**
+         * \brief The non-checking version of get_row() method.
+         */
         row_type const& operator[](size_t index) const
         {
             return m_rows[index];
         }
 
+        /**
+         * \brief Replaces the row at specified index.
+         */
         void put_row(size_t index, row_type const& r)
         {
+            assert(r.size() == m_width);
             m_rows.at(index) = r;
         }
 
+        /**
+         * \brief Returns a pixel at (x,y) position.
+         */
         pixel get_pixel(size_t x, size_t y) const
         {
             return get_row(y).at(x);
         }
 
+        /**
+         * \brief Replaces a pixel at (x,y) position.
+         */
         void set_pixel(size_t x, size_t y, pixel p)
         {
             get_row(y).at(x) = p;
@@ -150,10 +187,16 @@ namespace png
         row_vec m_rows;
     };
 
+    /**
+     * \brief The row_traits specialization for unpacked pixel rows.
+     */
     template< typename pixel >
     class row_traits< std::vector< pixel > >
     {
     public:
+        /**
+         * \brief Returns the starting address of the row.
+         */
         static pixel* get_data(std::vector< pixel >& vec)
         {
             assert(vec.size());
@@ -161,6 +204,9 @@ namespace png
         }
     };
 
+    /**
+     * The pixel_buffer specialization for unpacked pixels.
+     */
     template< typename pixel >
     class pixel_buffer
         : public basic_pixel_buffer< pixel, std::vector< pixel > >
@@ -275,10 +321,19 @@ namespace png
 
     } // unnamed namespace
 
+    /**
+     * \brief The packed pixel row class template.
+     *
+     * Stores the pixel row as a std::vector of byte-s, providing
+     * access to individual packed pixels via proxy objects.
+     */
     template< class pixel >
     class packed_pixel_row
     {
     public:
+        /**
+         * \brief Constructs a pixel row object for \c size packed pixels.
+         */
         explicit packed_pixel_row(size_t size = 0)
         {
             resize(size);
@@ -289,6 +344,9 @@ namespace png
             return m_size;
         }
 
+        /**
+         * \brief Resizes the pixel row to hold up to \c size packed pixels.
+         */
         void resize(size_t size)
         {
             m_vec.resize(size / get_pixels_per_byte()
@@ -296,33 +354,59 @@ namespace png
             m_size = size;
         }
 
+        /**
+         * \brief The immutable packed pixel proxy type.
+         */
         typedef const_packed_pixel_proxy< pixel > const_pixel_proxy;
+
+        /**
+         * \brief The mutable packed pixel proxy type.
+         */
         typedef packed_pixel_proxy< pixel > pixel_proxy;
 
+        /**
+         * \brief Returns an immutable proxy the to the pixel at \c
+         * index.
+         */
         const_pixel_proxy at(size_t index) const
         {
             return const_pixel_proxy(m_vec.at(index / get_pixels_per_byte()),
                                      index);
         }
 
+        /**
+         * \brief Returns a mutable proxy the to the pixel at \c
+         * index.
+         */
         pixel_proxy at(size_t index)
         {
             return pixel_proxy(m_vec.at(index / get_pixels_per_byte()),
                                index);
         }
 
+        /**
+         * \brief Returns an immutable proxy the to the pixel at \c
+         * index.  The non-checking version.
+         */
         const_pixel_proxy operator[](size_t index) const
         {
             return const_pixel_proxy(m_vec[index / get_pixels_per_byte()],
                                      index);
         }
 
+        /**
+         * \brief Returns n mutable proxy the to the pixel at \c
+         * index.  The non-checking version.
+         */
         pixel_proxy operator[](size_t index)
         {
             return pixel_proxy(m_vec[index / get_pixels_per_byte()],
                                index);
         }
 
+        /**
+         * \brief Returns the starting address of the row.
+         */
         byte* get_data()
         {
             assert(m_vec.size());
@@ -339,16 +423,27 @@ namespace png
         size_t m_size;
     };
 
+    /**
+     * \brief The row_traits class template specialization for packed
+     * pixel row type.
+     */
     template< typename pixel >
     class row_traits< packed_pixel_row< pixel > >
     {
     public:
+        /**
+         * \brief Returns the starting address of the row.
+         */
         static byte* get_data(packed_pixel_row< pixel >& row)
         {
             return row.get_data();
         }
     };
 
+    /**
+     * \brief The pixel buffer class template specialization for the
+     * packed_gray_pixel type.
+     */
     template< size_t bits >
     class pixel_buffer< packed_gray_pixel< bits > >
         : public basic_pixel_buffer< packed_gray_pixel< bits >,
@@ -369,6 +464,10 @@ namespace png
         }
     };
 
+    /**
+     * \brief The pixel buffer class template specialization for the
+     * packed_index_pixel type.
+     */
     template< size_t bits >
     class pixel_buffer< packed_index_pixel< bits > >
         : public basic_pixel_buffer< packed_index_pixel< bits >,

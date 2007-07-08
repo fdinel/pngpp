@@ -46,6 +46,10 @@ namespace png
     namespace
     {
 
+        /**
+         * \brief IO transformation class template.  Converts image color
+         * space.
+         */
         template< typename pixel >
         struct convert_color_space_impl
         {
@@ -73,10 +77,11 @@ namespace png
             {
 //            dump_row(row, row_info->rowbytes);
 
-                uint_16* out = reinterpret_cast< uint_16* >(row);
                 for (size_t i = row_info->rowbytes; i-- > 0; )
                 {
-                    out[i] = row[i]; // << 8;
+                    // use PNG byte order (big-endian)
+                    row[i*2 + 0] = row[i];
+                    row[i*2 + 1] = 0;
                 }
 
 //            dump_row(row, row_info->rowbytes);
@@ -218,7 +223,7 @@ namespace png
     } // unnamed namespace
 
     /**
-     * \brief  IO transformation class template.  Converts image color
+     * \brief IO transformation class template.  Converts image color
      * space.
      *
      * This IO transformation class template is used to convert color
@@ -228,52 +233,86 @@ namespace png
      * to recompile libpng with some more conversion options turned
      * on.
      *
-     * \see  image, image::read
+     * Not implemented -- see specializations.
+     *
+     * \see image, image::read
      */
     template< typename pixel > struct convert_color_space;
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * rgb_pixel type.
+     */
     template<>
     struct convert_color_space< rgb_pixel >
         : convert_color_space_impl< rgb_pixel >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * rgb_pixel_16 type.
+     */
     template<>
     struct convert_color_space< rgb_pixel_16 >
         : convert_color_space_impl< rgb_pixel_16 >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * rgba_pixel type.
+     */
     template<>
     struct convert_color_space< rgba_pixel >
         : convert_color_space_impl< rgba_pixel >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * rgba_pixel_16 type.
+     */
     template<>
     struct convert_color_space< rgba_pixel_16 >
         : convert_color_space_impl< rgba_pixel_16 >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * gray_pixel type.
+     */
     template<>
     struct convert_color_space< gray_pixel >
         : convert_color_space_impl< gray_pixel >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * gray_pixel_16 type.
+     */
     template<>
     struct convert_color_space< gray_pixel_16 >
         : convert_color_space_impl< gray_pixel_16 >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * ga_pixel type.
+     */
     template<>
     struct convert_color_space< ga_pixel >
         : convert_color_space_impl< ga_pixel >
     {
     };
 
+    /**
+     * \brief Converts image color space.  A specialization for
+     * ga_pixel_16 type.
+     */
     template<>
     struct convert_color_space< ga_pixel_16 >
         : convert_color_space_impl< ga_pixel_16 >

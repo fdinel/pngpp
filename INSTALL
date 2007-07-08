@@ -4,6 +4,7 @@ The installation is standard "make; make install":
 
 	$ make
 	$ make test	# optional
+	$ make docs	# optional
 	$ su -c 'make install'
 
 You may specify PREFIX in order to install somewhere else instead of

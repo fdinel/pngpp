@@ -51,19 +51,21 @@ libpng_config := libpng-config
 endif
 
 build_files := Makefile
-info_files := AUTHORS COPYING INSTALL README TODO
-header_files := *.hpp
-source_files :=
+doc_files := AUTHORS COPYING INSTALL README TODO
+headers := *.hpp
+sources :=
 
 dist_dir := png++-$(version)
 dist_package := png++-$(version).tar.gz
-dist_files := $(build_files) $(info_files) \
-  $(header_files) $(source_files)
+dist_files := $(build_files) $(doc_files) \
+  $(headers) $(sources)
 dist_subdirs := example test
 
-all: $(targets)
+all: examples
 
-install:
+install: install-headers install-docs
+
+install-headers:
 	mkdir -p $(PREFIX)/include/png++
 	cp *.hpp $(PREFIX)/include/png++
 
@@ -105,7 +107,25 @@ test-compile-headers: *.hpp
 	done
 	rm -f *.hpp.o *.hpp.cpp
 
+docs:
+	doxygen
+
+install-docs:
+	if [ -d ./doc ]; then \
+		dir=$(PREFIX)/share/doc/$(dist_dir); \
+		rm -rf $$dir; \
+		mkdir -p $$dir \
+		&& cp -r $(doc_files) doc/html $$dir; \
+		cd $(PREFIX)/share/doc; \
+		[ -L png++ ] && rm png++; \
+		[ -d png++ ] || ln -s $(dist_dir) png++; \
+	fi
+
+examples:
+	$(MAKE) -C example $(MAKEFLAGS)
+
 .PHONY: all install \
   dist dist-mkdir dist-copy-files dist-package \
   clean thorough-clean \
-  check test test-clean test-compile-headers
+  check test test-clean test-compile-headers \
+  docs examples
