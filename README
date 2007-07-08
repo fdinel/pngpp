@@ -47,9 +47,9 @@ Also, you can check out sources directly from SVN repository:
 
 	svn://svn.sv.nongnu.org/pngpp/trunk/
 or
-	http://svn.sv.nongnu.org/pngpp/trunk/ (for people w/o outgoing svn).
+	http://svn.sv.nongnu.org/pngpp/trunk/  (for people w/o outgoing svn).
 
-Online version of the documentation can be found here:
+Online documentation can be found here:
 
 	http://www.nongnu.org/pngpp/doc/html/index.html
 
