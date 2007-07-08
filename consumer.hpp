@@ -48,8 +48,8 @@ namespace png
      * as inside image class implementation to read pixels into the
      * pixel buffer.
      *
-     * Encapsulates PNG image reading procedure.  In order to create
-     * custom pixel consumer, use CRTP trick:
+     * Encapsulates PNG %image reading procedure.  In order to create
+     * custom pixel %consumer, use CRTP trick:
      *
      * \code
      * class pixel_consumer
@@ -59,7 +59,7 @@ namespace png
      * };
      * \endcode
      *
-     * Your pixel consumer class should implement \c get_next_row()
+     * Your pixel %consumer class should implement \c get_next_row()
      * method and \c reset() method (optional).  Their signatures are
      * as follows:
      *
@@ -69,17 +69,17 @@ namespace png
      * \endcode
      *
      * The \c get_next_row() method is called every time a new row of
-     * image data is available to the reader.  The position of the row
+     * %image data is available to the reader.  The position of the row
      * being read is passed as \c pos parameter.  The \c pos takes
      * values from \c 0 to \c <image_height>-1 inclusively.  The
      * method should return the starting address of a row buffer
      * capable of storing appropriate amount of pixels (i.e. the width
-     * of the image being read).  The address should be casted to
+     * of the %image being read).  The address should be casted to
      * png::byte* pointer type using \c reinterpret_cast<> or a
      * C-style cast.
      *
      * The optional \c reset() method is called every time the new
-     * pass of interlaced image processing starts.  The number of
+     * pass of interlaced %image processing starts.  The number of
      * interlace pass is avaiable as the only parameter of the method.
      * For non-interlaced images the method is called once prior to
      * any calls to \c get_next_row().  The value of \c 0 is passed
@@ -93,9 +93,9 @@ namespace png
      * you will have to construct the consumer object passing the
      * reference to image_info object.
      *
-     * Also, you might want implement an info holder object yourself
+     * Also, you might want implement an %info holder object yourself
      * to fine-tune your code.  In any case, you can access the
-     * image_info object from your consumer class methods using the
+     * image_info object from your %consumer class methods using the
      * following code:
      *
      * \code
@@ -104,13 +104,15 @@ namespace png
      *
      * An optional \c bool template parameter \c interlacing_supported
      * specifies whether reading interlacing images is supported by
-     * your consumer class.  It defaults to \c false.  An attempt to
-     * read an interlaced image will result in discarding pixels
+     * your %consumer class.  It defaults to \c false.  An attempt to
+     * read an interlaced %image will result in discarding pixels
      * obtained at all the interlacing passes except the last one.
      *
      * In order to fully support interlacing specify \c true for \c
      * interlacing_supported parameter and implement \c reset()
      * method.
+     *
+     * \see image, generator
      */
     template< typename pixel,
               class pixcon,

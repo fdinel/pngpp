@@ -47,7 +47,7 @@ namespace png
     {
 
         /**
-         * \brief IO transformation class template.  Converts image color
+         * \brief IO transformation class template.  Converts %image %color
          * space.
          */
         template< typename pixel >
@@ -223,24 +223,27 @@ namespace png
     } // unnamed namespace
 
     /**
-     * \brief IO transformation class template.  Converts image color
+     * \brief IO transformation class template.  Converts %image %color
      * space.
      *
-     * This IO transformation class template is used to convert color
-     * space of the source image to color space of target image.  An
-     * error with human-readable description is thrown when color
-     * space could not be converted.  Often, this means that you have
-     * to recompile libpng with some more conversion options turned
-     * on.
+     * This IO transformation class template is used to convert %color
+     * space of the source %image to the %color space of the target
+     * %image.  An error with human-readable description is thrown
+     * when the %color space could not be converted.  Often, this
+     * means that you have to recompile libpng with some more
+     * conversion options turned on.
      *
      * Not implemented -- see specializations.
      *
      * \see image, image::read
      */
-    template< typename pixel > struct convert_color_space;
+    template< typename pixel >
+    struct convert_color_space
+    {
+    };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * rgb_pixel type.
      */
     template<>
@@ -250,7 +253,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * rgb_pixel_16 type.
      */
     template<>
@@ -260,7 +263,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * rgba_pixel type.
      */
     template<>
@@ -270,7 +273,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * rgba_pixel_16 type.
      */
     template<>
@@ -280,7 +283,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * gray_pixel type.
      */
     template<>
@@ -290,7 +293,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * gray_pixel_16 type.
      */
     template<>
@@ -300,7 +303,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * ga_pixel type.
      */
     template<>
@@ -310,7 +313,7 @@ namespace png
     };
 
     /**
-     * \brief Converts image color space.  A specialization for
+     * \brief Converts %image %color space.  A specialization for
      * ga_pixel_16 type.
      */
     template<>

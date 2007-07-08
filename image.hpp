@@ -43,10 +43,10 @@ namespace png
     /**
      * \brief Class template to represent PNG image.
      *
-     * The image consists of pixel data as well as additional image
-     * info like interlace type, compression method, palette (for
+     * The image consists of pixel data as well as additional %image
+     * %info like interlace type, compression method, palette (for
      * colormap-based images) etc.  Provides methods to read and write
-     * images from/to a generic stream and to manipulate image pixels.
+     * images from/to a generic stream and to manipulate %image pixels.
      */
     template< typename pixel >
     class image

@@ -49,8 +49,8 @@ namespace png
      *
      * A usage example can be found in \c example/pixel_generator.cpp.
      *
-     * Encapsulates PNG image writing procedure.  In order to create
-     * custom pixel generator, use CRTP trick:
+     * Encapsulates PNG %image writing procedure.  In order to create
+     * custom pixel %generator, use CRTP trick:
      *
      * \code
      * class pixel_generator
@@ -60,7 +60,7 @@ namespace png
      * };
      * \endcode
      *
-     * Your pixel generator class should implement \c get_next_row()
+     * Your pixel %generator class should implement \c get_next_row()
      * method and \c reset() method (optional).  Their signatures are
      * as follows:
      *
@@ -70,22 +70,22 @@ namespace png
      * \endcode
      *
      * The \c get_next_row() method is called every time a new row of
-     * image data is needed by the writer.  The position of the row
+     * %image data is needed by the writer.  The position of the row
      * being written is passed as \c pos parameter.  The \c pos takes
      * values from \c 0 to \c <image_height>-1 inclusively.  The
      * method should return the starting address of a row buffer
      * storing an appropriate amount of pixels (i.e. the width of the
-     * image being written).  The address should be casted to
+     * %image being written).  The address should be casted to
      * png::byte* pointer type using \c reinterpret_cast<> or a
      * C-style cast.
      *
      * The optional \c reset() method is called every time the new
-     * pass of interlaced image processing starts.  The number of
+     * pass of interlaced %image processing starts.  The number of
      * interlace pass is avaiable as the only parameter of the method.
      * For non-interlaced images the method is called once prior to
      * any calls to \c get_next_row().  The value of \c 0 is passed
      * for the \c pass number.  You do not have to implement this
-     * method unless you are going to support interlaced image
+     * method unless you are going to support interlaced %image
      * generation.
      *
      * An optional template parameter \c info_holder encapsulated
@@ -94,14 +94,16 @@ namespace png
      *
      * An optional \c bool template parameter \c interlacing_supported
      * specifies whether writing interlacing images is supported by
-     * your generator class.  It defaults to \c false.  An attempt to
-     * write an interlaced image will result in throwing
+     * your %generator class.  It defaults to \c false.  An attempt to
+     * write an interlaced %image will result in throwing
      * std::logic_error.
      *
      * In order to fully support interlacing specify \c true for \c
      * interlacing_supported parameter and implement \c reset()
      * method.  You _must_ generate the same pixels for every pass to
-     * get the correct PNG image output.
+     * get the correct PNG %image output.
+     *
+     * \see image, consumer
      */
     template< typename pixel,
               class pixgen,
