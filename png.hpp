@@ -93,10 +93,10 @@
  * image.write("output.png");
  * \endcode
  *
- * The code reads an image from the file on disk named \c input.png,
- * then writes the image to a file named \c output.png.  The image
- * class template allows you to specify the desired pixel type for the
- * image data.  The available pixel types include: RGB, Grayscale and
+ * The code reads an image from the file named \c input.png, then
+ * writes the image to a file named \c output.png.  The image class
+ * template allows you to specify the desired pixel type for the image
+ * data.  The available pixel types include: RGB, Grayscale and
  * Indexed pixels.  Some of the pixel types can have an alpha channel.
  *
  * The png++ naturally supports reading PNG images of any %color type

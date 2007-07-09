@@ -18,9 +18,9 @@ you can read or write PNG images just in a single line of C++ code:
 png::image< png::rgb_pixel > image("input.png");
 image.write("output.png");
 
-The code reads an image from the file on disk named "input.png", then
-writes the image to a file named "output.png".  In this example png++
-does all the transformations needed to create adequate in-memory RGB
+The code reads an image from the file named "input.png", then writes
+the image to a file named "output.png".  In this example png++ does
+all the transformations needed to create adequate in-memory RGB
 representation of the image (well, in most cases it simply instructs
 libpng to do so).
 
@@ -28,7 +28,7 @@ The image in "input.png" can be RGB image, or it might be grayscale or
 even indexed image with a palette -- png++ will just convert any input
 to RGB format.  However, for technical reasons such automatic
 transformation is supported for RGB and Grayscale color types only.
-Optionally where may be an alpha channel in the target color space
+Optionally there may be an alpha channel in the target color space
 (RGBA and Gray+Alpha respectively).
 
 
